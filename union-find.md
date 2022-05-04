@@ -1,6 +1,6 @@
 ## Union Find
 
-Created in 2021-12-15. https://leetcode.com/tag/union-find/
+Created in 2021-12-15. https://leetcode.com/tag/union-find/ Update 2022-04-30.
 
 ### Main Method
 
@@ -9,9 +9,20 @@ unordered_map<int,int> index;
 
 // Find Origin source
 int find(int x) {
-    if(index.count(x) == 0 || index[x] == x)return x;
+    if(index.count(x) == 0 || index[x] == x)return index[x] = x;
     return index[x] = find(index[x]);
 }
+
+OR initialize first
+
+int initialize(int n) {
+    for(int i = 0;i < n;i++) index[i] = i;
+}
+int find(int x) {
+    if(index[x] == x)return x;
+    return index[x] = find(index[x]);
+}
+
 
 // Union
 void connect(int a, int b) {
@@ -46,9 +57,7 @@ public:
 };
 ```
 
-### 684. Redundant Connection
-
-https://leetcode.com/problems/redundant-connection/
+### [684. Redundant Connection](https://leetcode.com/problems/redundant-connection/)
 
 ```
 class Solution {
@@ -73,36 +82,86 @@ public:
 };
 ```
 
-### 2076. Process Restricted Friend Requests
-
-https://leetcode.com/problems/process-restricted-friend-requests/
+### [1584. Min Cost to Connect All Points](https://leetcode.com/problems/min-cost-to-connect-all-points/)
 
 ```
 class Solution {
 public:
-    unordered_map<int,int> index;
-    int getParent(int x) {
-        if(index[x] == x)return x;
-        return index[x] = getParent(index[x]);
+    unordered_map<int,int> parent;
+    int get(int x) {
+        if(parent[x] == x)return x;
+        return parent[x] = get(parent[x]);
     }
-    vector<bool> friendRequests(int n, vector<vector<int>>& restrictions, vector<vector<int>>& requests) {
-        vector<bool> res;
-        for(int i = 0;i < n;i++)index[i] = i; // 初始化
-        for(int i = 0;i < requests.size();i++) {
-            int a = requests[i][0], b = requests[i][1];
-            int p = getParent(a), q = getParent(b);
-            bool valid = true;
-            for(vector<int> &r: restrictions) {
-                int x = getParent(r[0]), y = getParent(r[1]);
-                if ((x == p && y == q) || (x == q && y == p)) {
-                    valid = false;
-                    break;
-                }
-            }
-            res.push_back(valid);
-            if(valid)index[p] = q;
+    int minCostConnectPoints(vector<vector<int>>& points) {
+        priority_queue<vector<int>, vector<vector<int>>, greater<vector<int>>> pq;
+        int length = points.size();
+        for(int i = 0; i < length; i++) {
+            parent[i] = i;
         }
-        return res;
+        for(int i = 0; i < length; i++) {
+            for(int j = i + 1; j < length;j++) {
+                pq.push({abs(points[i][0] - points[j][0]) + abs(points[i][1] - points[j][1]), i, j});
+            }
+        }
+        int component = length;
+        int result = 0;
+        while(component > 1) {
+            vector<int> current = pq.top();
+            pq.pop();
+            int parentX = get(current[1]);
+            int parentY = get(current[2]);
+            if(parentX != parentY) {
+                parent[parentX] = parentY;
+                result += current[0];
+                component--;
+            }
+        }
+        return result;
     }
 };
+```
+
+### [1135. Connecting Cities With Minimum Cost](https://leetcode.com/problems/connecting-cities-with-minimum-cost/)
+
+```
+class Solution {
+public:
+    unordered_map<int,int> unions;
+    int getParent(int x) {
+        if(unions[x] == x) return x;
+        return unions[x] = getParent(unions[x]);
+    }
+    int minimumCost(int n, vector<vector<int>>& connections) {
+        for(int i = 1;i <= n;i++)unions[i] = i;
+        sort(connections.begin(), connections.end(), [](const vector<int>& c1, const vector<int>& c2) {
+            return c1[2] < c2[2];
+        });
+        int result = 0, component = n;
+        for(vector<int>& connection: connections) {
+            int a = connection[0], b = connection[1], cost = connection[2];
+            int parentA = getParent(a), parentB = getParent(b);
+            if(parentA != parentB) {
+                result += cost;
+                unions[parentA] = parentB;
+                component--;
+            }
+        }
+        return component != 1 ? -1: result;
+    }
+};
+```
+
+### [1168. Optimize Water Distribution in a Village](https://leetcode.com/problems/optimize-water-distribution-in-a-village/)
+
+```
+        ......
+int minCostToSupplyWater(int n, vector<int>& wells, vector<vector<int>>& pipes) {
+        for(int i = 1; i <= n; i++)unions[i] = i;
+        
+        // Add a virtual node "0", 
+        // connect it to houses with edges weighted by the costs to build wells in these houses.
+        for(int i = 0; i < wells.size(); i++) {
+            pipes.push_back({0, i + 1, wells[i]});
+        }
+        ......
 ```
