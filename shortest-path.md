@@ -50,11 +50,12 @@ public:
         while(!pq.empty()) {
             vector<int> current = pq.top();
             pq.pop();
-            int dist = current[1];
-            for(vector<int>& x: neighbors[current[0]]) {
-                if(distance[x[0]] > dist + x[1]) {
-                    distance[x[0]] = dist + x[1];
-                    pq.push({x[0], distance[x[0]]});
+            int currentDist = current[1];
+            int currentLocation = current[0];
+            for(vector<int>& x: neighbors[currentLocation]) {
+                if(distance[x[0]] > currentDist + x[1]) {
+                    distance[x[0]] = currentDist + x[1];
+                    pq.push({x[0], currentDist + x[1]});
                 }
             }
         }
