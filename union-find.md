@@ -165,3 +165,42 @@ int minCostToSupplyWater(int n, vector<int>& wells, vector<vector<int>>& pipes) 
         }
         ......
 ```
+
+**[305. Number of Islands II](https://leetcode.com/problems/number-of-islands-ii/)**
+
+```
+class Solution {
+public:
+    unordered_map<string, string> root;
+    string serialize(int x, int y) {
+        return "(" + to_string(x) + "," + to_string(y) + ")";
+    }
+    string getRoot(string coordinate){
+        if (root.count(coordinate) == 0 || 
+            root[coordinate] == coordinate) return root[coordinate] = coordinate;
+        return root[coordinate] = getRoot(root[coordinate]);
+    }
+    vector<int> numIslands2(int m, int n, vector<vector<int>>& positions) {
+        int count = 0;
+        vector<vector<int>> directions {{1,0}, {-1,0}, {0,1}, {0,-1}};
+        vector<int> result;
+        unordered_map<string, int> islands;
+        for(int i = 0;i < positions.size(); i++){
+            if(islands[serialize(positions[i][0], positions[i][1])]++ == 0)count++;
+            for(vector<int>& direction: directions){
+                int x = positions[i][0] + direction[0];
+                int y = positions[i][1] + direction[1];
+                if(x < 0 || x >= m || y < 0 || y >= n || islands[serialize(x, y)] == 0)continue;
+                string root2 = getRoot(serialize(positions[i][0], positions[i][1]));
+                string root1 = getRoot(serialize(x, y));
+                if(root1 != root2){
+                    root[root2] = root1;
+                    count--;
+                }
+            }
+            result.push_back(count);
+        }
+        return result;
+    }
+};
+```

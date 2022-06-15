@@ -148,3 +148,62 @@ public:
     
 };
 ```
+
+**[694. Number of Distinct Islands](https://leetcode.com/problems/number-of-distinct-islands/)**
+
+An island is considered to be the same as another if and only if one island can be translated (and not rotated or reflected) to equal the other. Return the number of distinct islands.
+
+```
+class Solution {
+public:
+    vector<vector<int>> directions = {{-1, 0}, {1,0}, {0,-1}, {0,1}};
+    void bfs(vector<vector<int>>& grid, int i,int j, vector<vector<int>>& island){
+        int n = grid.size();
+        int m = grid[0].size();
+        queue<pair<int, int>> qu;
+        qu.push({i, j});
+        grid[i][j] = 2;
+        island.push_back({i, j});
+        while(!qu.empty()){
+            pair<int, int> current = qu.front();
+            qu.pop();
+            for(vector<int>& direction: directions){
+                int nextx = current.first + direction[0];
+                int nexty = current.second + direction[1];
+                if(nextx < 0 || nextx >= n || nexty < 0 || nexty >= m || grid[nextx][nexty] != 1)continue;
+                qu.push({nextx, nexty});
+                grid[nextx][nexty] = 2;
+                island.push_back({nextx, nexty});
+            }
+        }
+    }
+    string serialize(vector<vector<int>>& island) {
+        int beginx = island[0][0], beginy = island[0][1];
+        string result = "";
+        for(vector<int>& i: island) {
+            i[0] -= beginx;
+            i[1] -= beginy;
+            result += "(" + to_string(i[0]) + "," + to_string(i[1]) + "),"; 
+        }
+        return result;
+    }
+    int numDistinctIslands(vector<vector<int>>& grid) {
+        int n = grid.size();
+        if(n == 0)return 0;
+        int m = grid[0].size();
+        if(m == 0)return 0;
+        unordered_map<string, int> cnt;
+        for(int i = 0;i < n;i++){
+            for(int j = 0;j < m;j++){
+                if(grid[i][j] == 1) {
+                    vector<vector<int>> island;
+                    bfs(grid, i, j, island);
+                    sort(island.begin(), island.end());
+                    cnt[serialize(island)]++;
+                }
+            }
+        }
+        return cnt.size();
+    }
+};
+```
