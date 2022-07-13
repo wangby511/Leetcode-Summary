@@ -108,7 +108,7 @@ public:
                         if(ids[newi][newj] != 0) {
                             cntIslands[ids[newi][newj]]++;
                         }
-                        int connectedIslandArea = 0;
+                        int connectedIslandArea = 1;
                         for (auto &[id, numberOfId]: cntIslands) {
                             connectedIslandArea += islandArea[id];
                         }
@@ -141,9 +141,9 @@ public:
     0 0  0  3 3
     
     
-    maxResult = 5
+    maxResult = 4 + 1 + 1 = 6
     
-    make grid[1][2] from water into island, and connect islands with id '1' and '2'. The altogether area is 4 + 1 = 5.
+    make grid[1][2] from water into island, and connect islands with id '1' and '2'. The altogether area is 4 + 1 + 1 = 6.
 */
     
 };

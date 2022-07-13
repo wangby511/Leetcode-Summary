@@ -2,9 +2,62 @@
 
 Created in 2021-12-15.
 
-### 207. Course Schedule && 210. Course Schedule II
+** https://www.lintcode.com/problem/127/**
 
-判断并找出正确的上课顺序。https://leetcode.com/problems/course-schedule-ii/
+```
+/**
+ * Definition for Directed graph.
+ * struct DirectedGraphNode {
+ *     int label;
+ *     vector<DirectedGraphNode *> neighbors;
+ *     DirectedGraphNode(int x) : label(x) {};
+ * };
+ */
+
+class Solution {
+public:
+    /**
+     * @param graph: A list of Directed graph node
+     * @return: Any topological order for the given graph.
+     */
+    vector<DirectedGraphNode*> topSort(vector<DirectedGraphNode*> graph) {
+        // write your code here
+        unordered_map<DirectedGraphNode*, int> indegree;
+        for(DirectedGraphNode* node: graph) {
+            indegree[node]+=0;
+            for(DirectedGraphNode* n: node->neighbors) {
+                indegree[n]++;
+            }
+        }
+        queue<DirectedGraphNode*> qu;
+        vector<DirectedGraphNode*> result;
+        for(auto it: indegree) {
+            if(it.second == 0) {
+                qu.push(it.first);
+            }
+        }
+        while(qu.size() > 0) {
+            DirectedGraphNode* current = qu.front();
+            result.push_back(current);
+            qu.pop();
+            for(DirectedGraphNode* n : current->neighbors) {
+                if(--indegree[n] == 0) {
+                    qu.push(n);
+                }
+            }
+        }
+        return result;
+    }
+};
+```
+
+**207. Course Schedule && 210. Course Schedule II**
+
+判断并找出正确的上课顺序。
+
+https://leetcode.com/problems/course-schedule/
+
+https://leetcode.com/problems/course-schedule-ii/
 
 ```
 class Solution {
@@ -36,14 +89,14 @@ public:
         if(result.size() < numCourses)return {};
         return result;
 
-        // return result.size() == numCourses; is Leetcode 207. Course Schedule https://leetcode.com/problems/course-schedule/
+        // return result.size() == numCourses; is Leetcode 207. Course Schedule
     }
 };
 ```
 
-### 310. Minimum Height Trees
+**[310. Minimum Height Trees](https://leetcode.com/problems/minimum-height-trees/)**
 
-利用topo sort找出入度最多的节点，其可能构成树的根结点并且使得树的高度最小。bfs层级遍历。
+利用topological sort找出入度最多的节点，其可能构成树的根结点并且使得树的高度最小。bfs层级遍历。
 
 ```
 class Solution {
@@ -91,3 +144,8 @@ public:
     }
 };
 ```
+
+**269. Alien Dictionary**
+
+
+**444. Sequence Reconstruction**

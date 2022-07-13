@@ -2,6 +2,8 @@
 
 **[239. Sliding Window Maximum](https://leetcode.com/problems/sliding-window-maximum/)**
 
+找出window里面的最大元素，保证deque里面的元素是单调递减顺序。
+
 ```
 class Solution {
 public:

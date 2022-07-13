@@ -17,16 +17,16 @@ public:
         vector<vector<int>> result;
         sort(nums.begin(), nums.end());
         int len = nums.size();
-        for(int i = 0;i < len;i++) {
-            int j = i + 1,k = len - 1;
-            if(i > 0 && nums[i] == nums[i - 1])continue;
-            while(j < k) {
+        for (int i = 0;i < len;i++) {
+            int j = i + 1, k = len - 1;
+            if (i > 0 && nums[i] == nums[i - 1])continue;
+            while (j < k) {
                 int sum = nums[i] + nums[j] + nums[k];
-                if(sum > 0) {
+                if (sum > 0) {
                     k--;
-                }else if(sum < 0) {
+                } else if(sum < 0) {
                     j++;
-                }else{
+                } else {
                     result.push_back({nums[i], nums[j], nums[k]});
                     j++;
                     k--;
@@ -72,7 +72,7 @@ public:
     int minMeetingRooms(vector<vector<int>>& intervals) {
         sort(intervals.begin(), intervals.end());
         priority_queue<int, vector<int>, greater<int>> pq;
-        for(vector<int> interval: intervals) {
+        for (vector<int> interval: intervals) {
             if(pq.size() > 0 && pq.top() <= interval[0]) {
                 pq.pop();
             }
@@ -157,7 +157,7 @@ class SparseVector {
 public:
     vector<pair<int,int>> originList;
     SparseVector(vector<int> &nums) {
-        for(int i = 0;i < nums.size();i++) {
+        for (int i = 0;i < nums.size();i++) {
             if(nums[i] == 0)continue;
             originList.push_back({i, nums[i]});
         }
@@ -174,7 +174,7 @@ public:
                 p2++;
             } else if (originList[p1].first < vec.originList[p2].first) {
                 p1++;
-            }else {
+            } else {
                 p2++;
             }
         }
@@ -183,7 +183,7 @@ public:
 };
 ```
 
-**[42. Trapping Rain Water](https://leetcode.com/problems/trapping-rain-water/)
+**[42. Trapping Rain Water](https://leetcode.com/problems/trapping-rain-water/)**
 
 Solution I - left, right view, 相当于阳光从左右两侧分别照过来，形成有阴影的山。
 
@@ -220,7 +220,7 @@ public:
     int trap(vector<int>& height) {
         int result = 0, current = 0;
         stack<int> st;
-        for(int current = 0; current < height.size(); current++) {
+        for (int current = 0; current < height.size(); current++) {
             while (!st.empty() && height[current] >= height[st.top()]) {
                 int top = st.top(); // 湖底高度
                 st.pop();
