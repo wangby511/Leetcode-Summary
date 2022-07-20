@@ -2,6 +2,8 @@
 
 Created in 2021-12-15.
 
+Remember: no duplicate directed edges in the graph!
+
 ** https://www.lintcode.com/problem/127/**
 
 ```
@@ -140,6 +142,78 @@ public:
                 result.push_back(i);
             }
         } 
+        return result;
+    }
+};
+```
+
+**[2115. Find All Possible Recipes from Given Supplies](https://leetcode.com/problems/find-all-possible-recipes-from-given-supplies/)**
+
+The indegree is no longer a integer number, instead it is a hash-set.
+
+```
+// > 1200 ms
+class Solution {
+public:
+    vector<string> findAllRecipes(vector<string>& recipes, vector<vector<string>>& ingredients, vector<string>& supplies) {
+        unordered_map<string, unordered_set<string>> indegree;
+        unordered_map<string, vector<string>> to;
+        int length = recipes.size();
+        for(int i = 0;i < length;i++) {
+            for(string ingredient: ingredients[i]) {
+                to[ingredient].push_back(recipes[i]);
+                indegree[recipes[i]].insert(ingredient);
+            }
+        }
+        queue<string> qu;
+        for(string supply: supplies)qu.push(supply);
+        vector<string> result;
+        while(qu.size()) {
+            string current = qu.front();
+            qu.pop();
+            for(string next: to[current]) {
+                if(indegree[next].find(current) != indegree[next].end()) {
+                    indegree[next].erase(current);
+                }
+                if(indegree[next].size() == 0) {
+                    qu.push(next);
+                    result.push_back(next);
+                }
+            }
+        }
+        return result;
+    }
+};
+```
+
+Also the indegree can be an integer number!
+
+```
+class Solution {
+public:
+    vector<string> findAllRecipes(vector<string>& recipes, vector<vector<string>>& ingredients, vector<string>& supplies) {
+        unordered_map<string, int> indegree;
+        unordered_map<string, vector<string>> to;
+        int length = recipes.size();
+        for(int i = 0;i < length;i++) {
+            for(string ingredient: ingredients[i]) {
+                to[ingredient].push_back(recipes[i]);
+                indegree[recipes[i]]++;
+            }
+        }
+        queue<string> qu;
+        for(string supply: supplies)qu.push(supply);
+        vector<string> result;
+        while(qu.size()) {
+            string current = qu.front();
+            qu.pop();
+            for(string next: to[current]) {
+                if(--indegree[next] == 0) {
+                    qu.push(next);
+                    result.push_back(next);
+                }
+            }
+        }
         return result;
     }
 };

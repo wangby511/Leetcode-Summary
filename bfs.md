@@ -247,7 +247,7 @@ Visited：一定要visited， 用来保证不在circle里循环，有的时候�
 
 **[490. The Maze](https://leetcode.com/problems/the-maze/)**
 
-迷宫题，小球直到撞墙才停下来。用visited记录停留到的点坐标。
+迷宫题，小球直到撞墙才停下来。用visited记录中途停留到的点的坐标。
 
 ```
 class Solution {
@@ -282,7 +282,7 @@ public:
 };
 ```
 
-Follow Up - find the shortest distance: 迷宫题，小球直到撞墙才停下来。用distance记录停留到点坐标的距离, dijkstra's算法。
+Follow Up - find the shortest distance: 迷宫题，小球直到撞墙才停下来。用distance记录停留到点坐标的距离, dijkstra's算法，采用优先级队列实现。
 
 **[505. The Maze II](https://leetcode.com/problems/the-maze-ii/)**
 
@@ -321,7 +321,6 @@ public:
             }
         }
         return -1;
-        //2022 07 08 FRIDAY NIGHT
     }
 };
 ```
@@ -369,6 +368,54 @@ public:
 
 ```
 Do bfs operation from each building to all other spaces. Calculate the sum distance to all buildings for each empty space.
+```
+
+**[1293. Shortest Path in a Grid with Obstacles Elimination](https://leetcode.com/problems/shortest-path-in-a-grid-with-obstacles-elimination/)**
+
+This time we are using a 3-dimensional distance array to record each shortest distance.
+
+distance[i][j][k] - the shortest distance from (0,0) to (i,j) which has k times of breaking walls chances left.
+
+dijkstra's - use a priority_queue
+
+```
+class Solution {
+public:
+    int shortestPath(vector<vector<int>>& grid, int k) {
+        priority_queue<vector<int>, vector<vector<int>>, greater<vector<int>>> pq;
+        int n = grid.size(), m = grid[0].size();
+        pq.push({0, 0, 0, ((grid[0][0] == 0) ? k : k - 1)});
+        
+        vector<vector<vector<int>>> distance(n, 
+            vector<vector<int>> (m, vector<int> (k + 1, n * m)));
+        
+        vector<vector<int>> directions = {{-1,0}, {1,0}, {0,1}, {0,-1}};
+        while (pq.size() > 0) {
+            vector<int> currentState = pq.top();
+            pq.pop();
+            int dist = currentState[0], i = currentState[1], j = currentState[2];
+            int kLeft = currentState[3];
+            if (i == n - 1 && j == m - 1)return dist;
+            for (vector<int> &direction: directions) {
+                int newi = i + direction[0];
+                int newj = j + direction[1];
+                if (newi < 0 || newi >= n || newj < 0 || newj >= m)continue;
+                if (grid[newi][newj] == 0) {
+                    if (distance[newi][newj][kLeft] > 1 + dist) {
+                        distance[newi][newj][kLeft] = 1 + dist;
+                        pq.push({1 + dist, newi, newj, kLeft});
+                    }
+                } else {
+                    if (kLeft - 1 >= 0 && distance[newi][newj][kLeft - 1] > 1 + dist) {
+                        distance[newi][newj][kLeft - 1] = 1 + dist;
+                        pq.push({1 + dist, newi, newj, kLeft - 1});
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+};
 ```
 
 ## Reference

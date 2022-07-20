@@ -8,6 +8,8 @@ Score 18
 
 Total Finish Time 0:56:08 + 0:05:00 x 4 = 1:16:08
 
+https://leetcode.com/contest/weekly-contest-300/
+
 **[2325. Decode the Message](https://leetcode.com/contest/weekly-contest-300/problems/decode-the-message/)**
 
 ```
