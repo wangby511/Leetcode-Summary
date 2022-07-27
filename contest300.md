@@ -2,7 +2,7 @@
 
 Finished in 2022-07-02
 
-Rank 1208 / 25150
+Rank 696 / 25150
 
 Score 18
 

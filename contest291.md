@@ -2,13 +2,15 @@
 
 Finished in 2022-04-30
 
-Rank 744 / 19223
+Rank 400 / 19223
 
 Score 18
 
 Total Finish Time 0:44:19 + 0:05:00 x 2 = 0:54:19
 
-**[2259. Remove Digit From Number to Maximize Result](https://leetcode.com/contest/weekly-contest-291/problems/remove-digit-from-number-to-maximize-result/)**
+https://leetcode.com/contest/weekly-contest-291/ranking
+
+**[2259. Remove Digit From Number to Maximize Result](https://leetcode.com/problems/remove-digit-from-number-to-maximize-result/)**
 
 ```
 class Solution {
@@ -26,7 +28,7 @@ public:
 };
 ```
 
-**[2260. Minimum Consecutive Cards to Pick Up](https://leetcode.com/contest/weekly-contest-291/problems/minimum-consecutive-cards-to-pick-up/)**
+**[2260. Minimum Consecutive Cards to Pick Up](https://leetcode.com/problems/minimum-consecutive-cards-to-pick-up/)**
 
 ```
 class Solution {
@@ -54,7 +56,7 @@ public:
 };
 ```
 
-**[2261. K Divisible Elements Subarrays](https://leetcode.com/contest/weekly-contest-291/problems/k-divisible-elements-subarrays/)**
+**[2261. K Divisible Elements Subarrays](https://leetcode.com/problems/k-divisible-elements-subarrays/)**
 
 ```
 class Solution {
@@ -83,7 +85,7 @@ public:
 };
 ```
 
-**[2262. Total Appeal of A String](https://leetcode.com/contest/weekly-contest-291/problems/total-appeal-of-a-string/)**
+**[2262. Total Appeal of A String](https://leetcode.com/problems/total-appeal-of-a-string/)**
 
 ```
 class Solution {

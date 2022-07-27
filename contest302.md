@@ -2,15 +2,15 @@
 
 Finished in 2022-07-16
 
-Rank 1695 / 24327
+Rank 1638 / 24327
 
 Score 18
 
 Total Finish Time 0:36:13 + 0:05:00 x 2 = 0:46:13
 
-https://leetcode.com/contest/weekly-contest-302/
+https://leetcode.com/contest/weekly-contest-302/ranking
 
-**[2341. Maximum Number of Pairs in Array](https://leetcode.com/contest/weekly-contest-302/problems/maximum-number-of-pairs-in-array/)**
+**[2341. Maximum Number of Pairs in Array](https://leetcode.com/problems/maximum-number-of-pairs-in-array/)**
 
 ```
 class Solution {
@@ -32,7 +32,7 @@ public:
 };
 ```
 
-**[2342. Max Sum of a Pair With Equal Sum of Digits](https://leetcode.com/contest/weekly-contest-302/problems/max-sum-of-a-pair-with-equal-sum-of-digits/)**
+**[2342. Max Sum of a Pair With Equal Sum of Digits](https://leetcode.com/problems/max-sum-of-a-pair-with-equal-sum-of-digits/)**
 
 ```
 class Solution {
@@ -69,7 +69,7 @@ public:
 };
 ```
 
-**[2343. Query Kth Smallest Trimmed Number](https://leetcode.com/contest/weekly-contest-302/problems/query-kth-smallest-trimmed-number/)**
+**[2343. Query Kth Smallest Trimmed Number](https://leetcode.com/problems/query-kth-smallest-trimmed-number/)**
 
 ```
 class Solution {
@@ -108,7 +108,7 @@ public:
 };
 ```
 
-**[2344. Minimum Deletions to Make Array Divisible](https://leetcode.com/contest/weekly-contest-302/problems/minimum-deletions-to-make-array-divisible/)**
+**[2344. Minimum Deletions to Make Array Divisible](https://leetcode.com/problems/minimum-deletions-to-make-array-divisible/)**
 
 ```
 class Solution {

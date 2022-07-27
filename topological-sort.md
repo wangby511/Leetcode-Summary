@@ -1,10 +1,34 @@
-## Topological Sort
+# Topological Sort
 
-Created in 2021-12-15.
+Created in 2021-12-15. 
 
-Remember: no duplicate directed edges in the graph!
+Updated 2022-07-20.
 
-** https://www.lintcode.com/problem/127/**
+Remember: no duplicate directed edges in the graph! Only in DAG(Directed Acyclic Graph) graph.
+
+推荐BFS Kahn算法，基于贪心，每次从入度为0度点开始，正序为拓扑。单纯拓扑不推荐DFS。
+
+## Graph Related
+
+Ways of representing graph:
+
+1) adjacency list
+
+2) adjacency matrix
+
+3) list of edges
+
+## Basic Steps
+
+1 建立图 adjacency list format
+
+2 找出in-degree
+
+3 找出入度为0的入口 加入队列queue
+
+4 bfs拓扑排序
+
+**[https://www.lintcode.com/problem/127/](https://www.lintcode.com/problem/127/)**
 
 ```
 /**
@@ -60,6 +84,8 @@ public:
 https://leetcode.com/problems/course-schedule/
 
 https://leetcode.com/problems/course-schedule-ii/
+
+BFS topological-sort解法：
 
 ```
 class Solution {
@@ -219,7 +245,68 @@ public:
 };
 ```
 
-**269. Alien Dictionary**
+**[269. Alien Dictionary](https://leetcode.com/problems/alien-dictionary/)**
 
+```
+class Solution {
+public:
+    string alienOrder(vector<string>& words) {
+        //每个字母都要考虑
+        int n = words.size();
+        unordered_map<char,vector<char>> tpo;
+        unordered_map<char,int> degree;
+        string result = "";
+        
+        //每个字母都要考虑
+        for(auto w: words){
+            for(auto c: w){ 
+                degree[c] = 0;
+            }
+        }
+        
+        for(int i = 0;i + 1 < n;i++){
+            string word1 = words[i];
+            string word2 = words[i + 1];
+            int n1 = word1.size();
+            int n2 = word2.size();
+            int j = 0;
+            while(j < n1 && j < n2 && word1[j] == word2[j])j++;
+            if(j < n1 && j == n2)return "";
+            if(j < n1 && j < n2){
+                tpo[word1[j]].push_back(word2[j]);
+                degree[word2[j]]++;
+            }
+        }
+
+        // 找出入度为0的字母加入队列
+        queue<char> q;
+        for(auto it:degree){
+            if(it.second == 0){
+                q.push(it.first);
+            }
+        }
+
+        // 开始拓扑排序
+        while(!q.empty()){
+            char x = q.front();
+            q.pop();
+            result += x;
+            for(char next: tpo[x]){
+                if(--degree[next] == 0){
+                    q.push(next);
+                }
+            }   
+        }
+
+        // 检查是否有剩余字母入度不为零
+        // for(auto it:degree){
+        //     if(it.second > 0)return "";
+        // }
+        if(result.size() != degree.size())return "";
+        return result;
+        
+    }
+};
+```
 
 **444. Sequence Reconstruction**

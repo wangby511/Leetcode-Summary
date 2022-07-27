@@ -8,9 +8,9 @@ Score 18
 
 Total Finish Time 0:48:59 + 0:05:00 x 2 = 0:58:59
 
-https://leetcode.com/contest/weekly-contest-287/
+https://leetcode.com/contest/weekly-contest-287/ranking
 
-**[2224. Minimum Number of Operations to Convert Time](https://leetcode.com/contest/weekly-contest-287/problems/minimum-number-of-operations-to-convert-time/)**
+**[2224. Minimum Number of Operations to Convert Time](https://leetcode.com/problems/minimum-number-of-operations-to-convert-time/)**
 
 ```
 class Solution {
@@ -29,7 +29,7 @@ public:
 };
 ```
 
-**[2225. Find Players With Zero or One Losses](https://leetcode.com/contest/weekly-contest-287/problems/find-players-with-zero-or-one-losses/)**
+**[2225. Find Players With Zero or One Losses](https://leetcode.com/problems/find-players-with-zero-or-one-losses/)**
 
 ```
 class Solution {
@@ -55,7 +55,7 @@ public:
 };
 ```
 
-**[2226. Maximum Candies Allocated to K Children](https://leetcode.com/contest/weekly-contest-287/problems/maximum-candies-allocated-to-k-children/)**
+**[2226. Maximum Candies Allocated to K Children](https://leetcode.com/problems/maximum-candies-allocated-to-k-children/)**
 
 Binary search
 
@@ -85,7 +85,7 @@ public:
 };
 ```
 
-**[2227. Encrypt and Decrypt Strings](https://leetcode.com/contest/weekly-contest-287/problems/encrypt-and-decrypt-strings/)**
+**[2227. Encrypt and Decrypt Strings](https://leetcode.com/problems/encrypt-and-decrypt-strings/)**
 
 ```
 class Encrypter {

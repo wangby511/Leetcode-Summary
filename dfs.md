@@ -2,9 +2,9 @@
 
 CREATED 2022-07-15
 
-## DFS + MEMO
+## DFS + MEMO 记忆化dfs搜索
 
-记忆化dfs搜索，搜索过程中把状态结果保存起来，以便作缓存用。
+搜索过程中把状态结果保存起来，以便作缓存用。
 
 **[576. Out of Boundary Paths](https://leetcode.com/problems/out-of-boundary-paths/)**
 

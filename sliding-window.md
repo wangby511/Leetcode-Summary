@@ -23,6 +23,37 @@ public:
 };
 ```
 
+Follow Up - Use the maximum window and the minimum window at the same time, and then do some restrictions:
+
+**[1438. Longest Continuous Subarray With Absolute Diff Less Than or Equal to Limit](https://leetcode.com/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/)**
+
+```
+class Solution {
+public:
+    int longestSubarray(vector<int>& nums, int limit) {
+        int length = nums.size();
+        deque<int> maximum, minimum;
+        int begin = 0;
+        int result = 0;
+        for(int i = 0;i < length;i++) {
+            while(maximum.size() && nums[maximum.back()] < nums[i])maximum.pop_back();
+            maximum.push_back(i);
+            
+            while(minimum.size() && nums[minimum.back()] > nums[i])minimum.pop_back();
+            minimum.push_back(i);
+            
+            while(begin <= i && abs(nums[maximum.front()] - nums[minimum.front()]) > limit) {
+                begin++;
+                while(maximum.size() && maximum.front() < begin)maximum.pop_front();
+                while(minimum.size() && minimum.front() < begin)minimum.pop_front();
+            }
+            result = max(result, i - begin + 1);
+        }
+        return result;
+    }
+};
+```
+
 **[76. Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring/)**
 
 ```
