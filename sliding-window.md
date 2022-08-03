@@ -1,5 +1,7 @@
 # Sliding Window
 
+Use two indexes number to indicate the beginning and the end of a certain window which slides in an array or a string.
+
 **[239. Sliding Window Maximum](https://leetcode.com/problems/sliding-window-maximum/)**
 
 找出window里面的最大元素，保证deque里面的元素是单调递减顺序。
@@ -182,6 +184,30 @@ public:
     }
 };
 ```
+
+**[487. Max Consecutive Ones II](https://leetcode.com/problems/max-consecutive-ones-ii/)**
+
+// Find the longest length of contiguous subarray which contains at most 1 zero number.
+
+```
+class Solution {
+public:
+    int findMaxConsecutiveOnes(vector<int>& nums) {
+        int length = nums.size();
+        int zeroNumber = 0, begin = 0, result = 0;
+        for(int i = 0; i < length;i++) {
+            if(nums[i] == 0)zeroNumber++;
+            while(zeroNumber > 1 && begin <= i) {
+                if(nums[begin++] == 0)zeroNumber--;
+            }
+            result = max(result, i - begin + 1);
+        }
+        return result;
+    }
+};
+```
+
+Follow Up - change to `while(zeroNumber > k && begin <= i) {` for [1004. Max Consecutive Ones III](https://leetcode.com/problems/max-consecutive-ones-iii/) problem.
 
 ## Reference
 

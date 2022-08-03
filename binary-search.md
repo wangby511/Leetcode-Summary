@@ -196,6 +196,45 @@ public:
 };
 ```
 
+**[378. Kth Smallest Element in a Sorted Matrix](https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/)**
+
+Find the kth smallest number in a matrix where each of the rows and columns is sorted in ascending order.
+
+Use binary search method: given a number, find the index postion of its order in the matrix.
+
+```
+class Solution {
+public:
+    int findSmallestNumber(vector<vector<int>>& matrix, int target) {
+        int k = 0;
+        int n = matrix.size();
+        int m = matrix[0].size();
+        for(int i = 0;i < n;i++) {
+            for(int j = 0;j < m;j++) {
+                if(matrix[i][j] <= target)k++;
+                else break;
+            }
+        }
+        return k;
+    }
+    int kthSmallest(vector<vector<int>>& matrix, int k) {
+        int n = matrix.size();
+        int m = matrix[0].size();
+        int left = matrix[0][0], right = matrix[n - 1][m - 1];
+        while(left < right) {
+            int middle = left + (right - left)/2;
+            int kth = findSmallestNumber(matrix, middle);
+            if(kth < k) {
+                left = middle + 1;
+            }else {
+                right = middle;
+            }
+        }
+        return left;
+    }
+};
+```
+
 ## Reference
 
 [1] <https://leetcode.com/discuss/general-discussion/786126/python-powerful-ultimate-binary-search-template-solved-many-problems>

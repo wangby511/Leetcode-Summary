@@ -1,8 +1,8 @@
 # Topological Sort
 
-Created in 2021-12-15. 
+Created in 2021-12-15
 
-Updated 2022-07-20.
+Updated 2022-07-31
 
 Remember: no duplicate directed edges in the graph! Only in DAG(Directed Acyclic Graph) graph.
 
@@ -24,9 +24,9 @@ Ways of representing graph:
 
 2 找出in-degree
 
-3 找出入度为0的入口 加入队列queue
+3 找出入度为0的入口，加入队列queue中。
 
-4 bfs拓扑排序
+4 bfs拓扑排序，依次把入度减为0的节点加入队列，最后查看是否全部遍历到，否则有环或者非连通图。
 
 **[https://www.lintcode.com/problem/127/](https://www.lintcode.com/problem/127/)**
 
