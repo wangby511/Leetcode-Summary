@@ -169,6 +169,8 @@ public:
 
 **[528. Random Pick with Weight](https://leetcode.com/problems/random-pick-with-weight/)**
 
+Use the pre-sum array to indicate the accumulated probability. Then use rand() to do binary search to find which range it falls in.
+
 ```
 class Solution {
 public:
@@ -200,7 +202,7 @@ public:
 
 Find the kth smallest number in a matrix where each of the rows and columns is sorted in ascending order.
 
-Use binary search method: given a number, find the index postion of its order in the matrix.
+Use binary search method: given a number, find the index position of its order in the matrix.
 
 ```
 class Solution {

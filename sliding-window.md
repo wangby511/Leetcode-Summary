@@ -25,7 +25,7 @@ public:
 };
 ```
 
-Follow Up - Use the maximum window and the minimum window at the same time, and then do some restrictions:
+Follow Up - Use 2 sliding windows to keep the maximum number and the minimum number at the same time, and then do some restrictions:
 
 **[1438. Longest Continuous Subarray With Absolute Diff Less Than or Equal to Limit](https://leetcode.com/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/)**
 

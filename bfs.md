@@ -251,7 +251,125 @@ public:
 };
 ```
 
+## 求最短路径问题
+
+求从一个点到另一个点能到达的最短路径
+
+### 点与点之间连接代价相同的情况
+
+当每个点的代价相同时，使用普通queue做BFS即可，也可以level order。
+
+**[1091. Shortest Path in Binary Matrix](https://leetcode.com/problems/shortest-path-in-binary-matrix/)**
+
+```
+class Solution {
+public:
+    enum enumType {VISITED = 2};
+    vector<vector<int>> dirs = {
+        {-1,0}, {1,0}, {0,1}, {0,-1}, {-1,-1}, {1,1}, {-1,1}, {1,-1}};
+    map<vector<int>, vector<int>> previous;
+    int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
+        int n = grid.size(), m = grid[0].size();
+        queue<vector<int>> qu;
+        if (grid[0][0] == 0) {
+            qu.push({0,0,1});
+            grid[0][0] = VISITED;
+        }
+        while (!qu.empty()) {
+            vector<int> c = qu.front();
+            qu.pop();
+            int i = c[0], j = c[1], step = c[2];
+            if(i == n - 1 && j == m - 1)return step;
+            for(vector<int> & dir: dirs) {
+                int x = i + dir[0], y = j + dir[1];
+                if(x < 0 || x >= n || y < 0 || y >= m || grid[x][y] != 0)continue;
+                qu.push({x, y, 1 + step});
+                grid[x][y] = VISITED;
+                previous[{x, y}] = {i, j}; // Record the shortest path for the follow up question
+            } 
+        }
+        return -1;
+    }
+};
+```
+
+**[815. Bus Routes](https://leetcode.com/problems/bus-routes/)**
+
+```
+class Solution {
+public:
+    int numBusesToDestination(vector<vector<int>>& routes, int source, int target) {
+        unordered_map<int, vector<int>> stationToBuses;
+        unordered_map<int, int> visitedBuses;
+        unordered_map<int, int> visitedStations;
+        for(int i = 0;i < routes.size();i++) {
+            for(int station: routes[i])stationToBuses[station].push_back(i);
+        }
+        queue<vector<int>> qu;
+        qu.push({source, 0});
+        visitedStations[source]++;
+        while(qu.size() > 0) {
+            int currentPosition = qu.front()[0];
+            int currentStep = qu.front()[1];
+            qu.pop();
+            if(currentPosition == target)return currentStep;
+            for(int bus: stationToBuses[currentPosition]) {
+                if(visitedBuses[bus]++ > 0)continue;
+                for(int stop: routes[bus]) {
+                    if(visitedStations[stop]++ > 0)continue;
+                    qu.push({stop, 1 + currentStep});
+                }
+            }
+        }
+        return -1;
+    }
+};
+```
+
+**[1730. Shortest Path to Get Food](https://leetcode.com/problems/shortest-path-to-get-food/)**
+
+Start from one node and then do bfs.
+
+```
+class Solution {
+public:
+    int getFood(vector<vector<char>>& grid) {
+        int n = grid.size(), m = grid[0].size();
+        queue<vector<int>> qu;
+        vector<vector<bool>> visited(n, vector<bool> (m, false)); // Try to use boolean instead of int.
+        for(int i = 0;i < n;i++) {
+            for(int j = 0;j < m;j++) {
+                if(grid[i][j] == '*') {
+                    visited[i][j] = true;
+                    qu.push({i, j, 0});
+                }
+            }
+        }
+        vector<vector<int>> dirs = {{-1,0}, {1,0}, {0,-1}, {0,1}};
+        while(!qu.empty()) {
+            vector<int> current = qu.front();
+            qu.pop();
+            int x = current[0], y = current[1], step = current[2];
+            if(grid[x][y] == '#')return step;
+            for(vector<int> &dir: dirs) {
+                int newx = x + dir[0], newy = y + dir[1];
+                if(newx < 0 || newx >= n || newy < 0 || newy >= m || grid[newx][newy] == 'X') {
+                    continue;
+                }
+                if(!visited[newx][newy]) {
+                    visited[newx][newy] = true;
+                    qu.push({newx, newy, 1 + step});
+                }
+            }
+        }
+        return -1;
+    }
+};
+```
+
 **[286. Walls and Gates](https://leetcode.com/problems/walls-and-gates/)**
+
+Start from multiple nodes and then do bfs in level order.
 
 Push all gates into queue first. Then for each coordinate, update its neighbor cells and push them to the queue if shorter distance is updated.Repeating above steps until there is nothing left in the queue.
 
@@ -290,48 +408,21 @@ public:
 };
 ```
 
-## 求最短路径问题
-
-从一个点到另一个点能到达的最短路径
-
-### 每个点到下一个点的代价相同的情况
-
-当每个点的代价相同时，就是普通queue的BFS，也可以level order。
-
-**[1091. Shortest Path in Binary Matrix](https://leetcode.com/problems/shortest-path-in-binary-matrix/)**
+**[317. Shortest Distance from All Buildings](https://leetcode.com/problems/shortest-distance-from-all-buildings/)**
 
 ```
-class Solution {
-public:
-    enum enumType {VISITED = 2};
-    vector<vector<int>> dirs = {
-        {-1,0}, {1,0}, {0,1}, {0,-1}, {-1,-1}, {1,1}, {-1,1}, {1,-1}};
-    map<vector<int>, vector<int>> previous;
-    int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
-        int n = grid.size(), m = grid[0].size();
-        queue<vector<int>> qu;
-        if (grid[0][0] == 0) qu.push({0,0,1});
-        while (!qu.empty()) {
-            vector<int> c = qu.front();
-            qu.pop();
-            int i = c[0], j = c[1], step = c[2];
-            if(i == n - 1 && j == m - 1)return step;
-            for(vector<int> & dir: dirs) {
-                int x = i + dir[0], y = j + dir[1];
-                if(x < 0 || x >= n || y < 0 || y >= m || grid[x][y] != 0)continue;
-                qu.push({x, y, 1 + step});
-                grid[x][y] = VISITED;
-                previous[{x, y}] = {i, j};
-            } 
-        }
-        return -1;
-    }
-};
+Similar to the question above (286. Walls and Gates).
+Do bfs operation from each building to all other spaces. Calculate the sum distance to all buildings for each empty space.
+And also remember to check whether this cell can be reached from all buildings.
 ```
 
-Follow Up of "The Maze I" - find the shortest distance: 迷宫题，小球直到撞墙才停下来。用distance记录停留到点坐标的距离, dijkstra's算法，采用优先级队列实现。
+### BFS依次顺序和要求的顺序不一致，类似DIJKSTRA'S算法，此时使用优先级队列
 
 **[505. The Maze II](https://leetcode.com/problems/the-maze-ii/)**
+
+Follow Up of "The Maze I" - find the shortest distance: 迷宫题，小球直到撞墙才停下来。
+
+用distance matrix记录停留到点坐标的距离, dijkstra's算法，采用优先级队列实现。
 
 ```
 class Solution {
@@ -372,12 +463,6 @@ public:
 };
 ```
 
-**[317. Shortest Distance from All Buildings](https://leetcode.com/problems/shortest-distance-from-all-buildings/)**
-
-```
-Do bfs operation from each building to all other spaces. Calculate the sum distance to all buildings for each empty space.
-```
-
 **[1293. Shortest Path in a Grid with Obstacles Elimination](https://leetcode.com/problems/shortest-path-in-a-grid-with-obstacles-elimination/)**
 
 This time we are using a 3-dimensional distance array to record each shortest distance.
@@ -396,6 +481,8 @@ public:
         
         vector<vector<vector<int>>> distance(n, 
             vector<vector<int>> (m, vector<int> (k + 1, n * m)));
+        // int distance[n][m][k + 1];
+        // initialize 3 dimensional matrix for distance by giving values
         
         vector<vector<int>> directions = {{-1,0}, {1,0}, {0,1}, {0,-1}};
         while (pq.size() > 0) {
@@ -422,6 +509,101 @@ public:
             }
         }
         return -1;
+    }
+};
+```
+
+**[787. Cheapest Flights Within K Stops](https://leetcode.com/problems/cheapest-flights-within-k-stops/)**
+
+See solution in shortest-path.md file. Similar solution with priority queue to pop up the cheapest price every time.
+
+### BFS同时并记录当前顺序
+
+Record the path while doing bfs search
+
+**[126. Word Ladder II](https://leetcode.com/problems/word-ladder-ii/)**
+
+Establish the graph first by connecting the words which only have one character difference
+
+Do the bfs search for the graph by beginning with beginWord, also record the previous word when searching for a new word.
+
+```
+class Solution {
+public:
+    bool oneLetterChanged(string a, string b){
+        if(a.size() != b.size())return false;
+        int n = a.size(), cnt = 0;
+        for(int i = 0;i < n;i++){
+            if(a[i] != b[i]){
+                if(cnt++ > 0)return false;
+            }
+        }
+        return true;
+    }
+    unordered_map<string, vector<string>> reverseIndexMap;
+    vector<vector<string>> result;
+    void findReverseOrder(string beginWord, string endWord, vector<string>& path) {
+        if(endWord == beginWord) {
+            path.push_back(beginWord);
+            result.push_back(path);
+            path.pop_back();
+            return;
+        }
+        path.push_back(endWord);
+        for(string previousWord: reverseIndexMap[endWord]) {
+            findReverseOrder(beginWord, previousWord, path);
+        }
+        path.pop_back();
+    }
+    vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
+        unordered_set<string> words;
+        for(string s:wordList) words.insert(s);
+        if(words.find(endWord) == words.end())return {};
+        
+        // Establish the graph
+        unordered_map<string, unordered_set<string>> graph;
+        wordList.push_back(beginWord);
+        int n = wordList.size();
+        for(int i = 0;i < n;i++){
+            for(int j = i + 1;j < n;j++){
+                if(oneLetterChanged(wordList[i], wordList[j])){
+                    graph[wordList[i]].insert(wordList[j]);
+                    graph[wordList[j]].insert(wordList[i]);
+                }
+            }
+        }
+        wordList.pop_back();
+        
+        // Do BFS search
+        queue<pair<string, int>> qu;
+        unordered_map<string, int> distance;
+        distance[beginWord] = 0;
+        qu.push({beginWord, 0});
+        while(!qu.empty()) {
+            pair<string, int> current = qu.front();
+            qu.pop();
+            string currentWord = current.first;
+            int step = current.second;
+            for(string newWord: graph[currentWord]) {
+                if(distance.count(newWord) == 0) {
+                    qu.push({newWord, 1 + step});
+                    distance[newWord] = 1 + step;
+                    reverseIndexMap[newWord] = {currentWord};
+                } else if(1 + step == distance[newWord]) {
+                    reverseIndexMap[newWord].push_back(currentWord);
+                } else if(1 + step < distance[newWord]) {
+                    qu.push({newWord, 1 + step});
+                    reverseIndexMap[newWord] = {currentWord};
+                }
+            }
+        }
+        if(distance.count(endWord) == 0)return {};
+        vector<string> path = {};
+        findReverseOrder(beginWord, endWord, path);
+        for(vector<string> &path: result) {
+            reverse(path.begin(), path.end());
+        }
+        return result;
     }
 };
 ```

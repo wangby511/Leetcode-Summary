@@ -2,6 +2,45 @@
 
 CREATED 2022-07-15
 
+UPDATED 2022-08-21
+
+## 判断是否可以从一点到达另外一点
+
+**[787. Cheapest Flights Within K Stops](https://leetcode.com/problems/cheapest-flights-within-k-stops)**
+
+```
+class Solution {
+public:
+    unordered_map<int, vector<vector<int>>> neighbors;
+    unordered_map<int, bool> visited;
+    bool canReach(int n, unordered_map<int,vector<vector<int>>>& neighbors, int src, int dst) {
+        // ... Normal DFS with visited array
+    }
+    int result = INT_MAX;
+    void dfs(int current, int dst, int k, int price) {
+        if(k < 0 || price > result)return;
+        if(current == dst) {
+            result = min(result, price);
+            return;
+        }
+        if(visited[current])return;
+        visited[current] = true;
+        for(vector<int>& nextFlight: neighbors[current]) {
+            dfs(nextFlight[0], dst, k - 1, price + nextFlight[1]);
+        }
+        visited[current] = false;
+    }
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int k) {
+        for(vector<int>& flight: flights) {
+            neighbors[flight[0]].push_back({flight[1], flight[2]});
+        }
+        if(!canReach(n, neighbors, src, dst))return -1;
+        dfs(src, dst, k + 1, 0);
+        return result == INT_MAX ? -1 : result;
+    }
+};
+```
+
 ## DFS + MEMO 记忆化dfs搜索
 
 搜索过程中把状态结果保存起来，以便作缓存用。

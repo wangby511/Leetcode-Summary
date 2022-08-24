@@ -1,10 +1,42 @@
-## Mono Stack 总结
+# Mono Stack 总结
 
 Created in 2021-12-12. https://leetcode.com/tag/monotonic-stack/
 
-### 739. Daily Temperatures
+Updated 2022-08-21
 
-https://leetcode.com/problems/daily-temperatures/
+## Max Rectangle Area Problem
+
+**[84. Largest Rectangle in Histogram](https://leetcode.com/problems/largest-rectangle-in-histogram/)**
+
+Search for the maximum rectangle area in a histogram. Using **a monolithic increasing stack** to record numbers. DO NOT forget to add a ZERO at the end of the array to deal with exit criteria.
+
+```
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& height) {
+        int result = 0;
+        height.push_back(0);
+        vector<int> index;
+            
+        for(int i = 0; i < height.size(); i++){
+            while(index.size() > 0 && height[index.back()] >= height[i]){
+                int h = height[index.back()];
+                index.pop_back();
+                    
+                int sidx = index.size() > 0 ? index.back() : -1;
+                result = max(result, h * (i-sidx-1));
+                cout<<h<<" * "<<"("<<i<<"-"<<sidx<<"-1) = "<<h * (i-sidx-1)<<endl;
+            }
+            index.push_back(i);
+        }
+        return result;
+    }
+};
+```
+
+Follow up question - **[85. Maximal Rectangle](https://leetcode.com/problems/maximal-rectangle/)** with time complexity O(#row^2 * #column).
+
+**[739. Daily Temperatures](https://leetcode.com/problems/daily-temperatures/)**
 
 ```
 class Solution {
@@ -26,9 +58,7 @@ public:
 };
 ```
 
-### 1673. Find the Most Competitive Subsequence
-
-https://leetcode.com/problems/find-the-most-competitive-subsequence/
+**[1673. Find the Most Competitive Subsequence](https://leetcode.com/problems/find-the-most-competitive-subsequence/)**
 
 Add another variable `canBeDeleted`.
 
@@ -57,9 +87,7 @@ public:
 };
 ```
 
-## 402. Remove K Digits
-
-https://leetcode.com/problems/remove-k-digits/
+**[402. Remove K Digits](https://leetcode.com/problems/remove-k-digits/)**
 
 ```
 class Solution {
@@ -92,9 +120,7 @@ public:
 };
 ```
 
-### 1944. Number of Visible People in a Queue
-
-https://leetcode.com/problems/number-of-visible-people-in-a-queue/
+**[1944. Number of Visible People in a Queue](https://leetcode.com/problems/number-of-visible-people-in-a-queue/)**
 
 Mono stack + Binary search
 ```
