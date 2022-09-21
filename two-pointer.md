@@ -8,6 +8,58 @@ Created in 2022-07-05
 
 3 固定间距指针（两个指针间距相同，步长相同）
 
+## 快慢指针，步长不同
+
+**[209. Minimum Size Subarray Sum](https://leetcode.com/problems/minimum-size-subarray-sum/)**
+
+Find the minimal length of a contiguous sub-array, of which the sum is greater than or equal to target.
+
+Use two pointers, one is normal for-loop and the other one controls that the sum between them is smaller than target.
+
+```
+class Solution {
+public:
+    int minSubArrayLen(int target, vector<int>& nums) {
+        int result = nums.size() + 1;
+        long product = 0;
+        int begin = 0;
+        for(int i = 0;i < nums.size();++i) {
+            int x = nums[i];
+            product += x;
+            while(begin <= i && product >= target) {
+                result = min(result, i - begin + 1);
+                product -= nums[begin++];
+            }
+        }
+        return (result == nums.size() + 1)? 0 : result;
+    }
+};
+```
+
+The same idea is in ***[713. Subarray Product Less Than K](https://leetcode.com/problems/subarray-product-less-than-k/)**
+
+```
+class Solution {
+public:
+    int numSubarrayProductLessThanK(vector<int>& nums, int k) {
+        int result = 0;
+        long product = 1;
+        int begin = 0;
+        for(int i = 0;i < nums.size();++i) {
+            int x = nums[i];
+            product *= x;
+            while(begin <= i && product >= k) {
+                product /= nums[begin++];
+            }
+            result += i + 1 - begin;
+        }
+        return result;
+    }
+};
+```
+
+## 左右端点指针，相向而行
+
 **[15. 3 Sum](https://leetcode.com/problems/3sum/)**
 
 ```
@@ -39,49 +91,7 @@ public:
     }
 };
 ```
-TIME O(N^2)
-
-**[253. Meeting Rooms II](https://leetcode.com/problems/meeting-rooms-ii/)**
-
-Solution I - 扫描线
-
-```
-class Solution {
-public:
-    int minMeetingRooms(vector<vector<int>>& intervals) {
-       map<int,int> u;
-        for(vector<int> &interval:intervals){
-            u[interval[0]]++;
-            u[interval[1]]--;
-        }
-        int result = 0, total = 0;
-        for(auto it:u){
-            total += it.second;
-            result = max(result, total);
-        }
-        return result;
-    }
-};
-```
-
-Solution II - priority queue
-
-```
-class Solution {
-public:
-    int minMeetingRooms(vector<vector<int>>& intervals) {
-        sort(intervals.begin(), intervals.end());
-        priority_queue<int, vector<int>, greater<int>> pq;
-        for (vector<int> interval: intervals) {
-            if(pq.size() > 0 && pq.top() <= interval[0]) {
-                pq.pop();
-            }
-            pq.push(interval[1]);
-        }
-        return pq.size();
-    }
-};
-```
+Time Complexity - O(N^2)
 
 **[1570. Dot Product of Two Sparse Vectors](https://leetcode.com/problems/dot-product-of-two-sparse-vectors/)**
 

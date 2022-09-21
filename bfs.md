@@ -608,6 +608,96 @@ public:
 };
 ```
 
+## 二分图 - Bipartition
+
+每个节点分配两种颜色之一，看是否满足二分图条件。bfs搜索没有染色的节点，看是否和邻居节点形成不同颜色。
+
+**[785. Is Graph Bipartite?](https://leetcode.com/problems/is-graph-bipartite/)**
+
+```
+class Solution {
+public:
+    enum colorType{
+        UNDEFINED = 0, GROUPA = 1, GROUPB = 2
+    };
+    bool bfs(vector<vector<int>>& graph, int begin, vector<int>& colors) {
+        queue<int> qu;
+        qu.push(begin);
+        colors[begin] = GROUPA;
+        while(!qu.empty()) {
+            int current = qu.front();
+            qu.pop();
+            int currentColor = colors[current];
+            for(int x: graph[current]) {
+                if(colors[x] == UNDEFINED) {
+                    colors[x] = (currentColor == GROUPA) ? GROUPB : GROUPA;
+                    qu.push(x);
+                }else{
+                    if(colors[x] == currentColor)return false;
+                }
+            }
+        }
+        return true;
+    }
+    bool isBipartite(vector<vector<int>>& graph) {
+        int n = graph.size();
+        vector<int> colors(n, UNDEFINED);
+        for(int i = 0;i < n;i++) {
+            if(colors[i] == UNDEFINED){
+                if(!bfs(graph, i, colors))return false;
+            }
+        }
+        return true;
+    }
+};
+```
+
+Similar question:
+
+**[886. Possible Bipartition](https://leetcode.com/problems/possible-bipartition/)**
+
+```
+class Solution {
+public:
+    enum colorType{
+        UNDEFINED = 0, GROUPA = 1, GROUPB = 2
+    };
+    unordered_map<int, vector<int>> dislikesmap;
+    bool bfs(int start, vector<int>& colors) {
+        queue<int> qu;
+        qu.push(start);
+        colors[start] = GROUPA;
+        while(!qu.empty()) {
+            int current = qu.front();
+            qu.pop();
+            int currentColor = colors[current];
+            for(int x: dislikesmap[current]) {
+                if(colors[x] == UNDEFINED) {
+                    colors[x] = (currentColor == GROUPA) ? GROUPB : GROUPA;
+                    qu.push(x);
+                }else{
+                    if(colors[x] == currentColor)return false;
+                }
+            }
+        }
+        return true;
+    }
+    bool possibleBipartition(int n, vector<vector<int>>& dislikes) {
+        for(vector<int> real: dislikes){
+            dislikesmap[real[0]].push_back(real[1]);
+            dislikesmap[real[1]].push_back(real[0]);
+        }
+        vector<int> colors(n + 1, 0);
+        for(int i = 1;i <= n;i++) {
+            if(colors[i] == UNDEFINED) {
+                if(!bfs(i, colors))return false;
+            }
+        }
+        return true;
+    }
+};
+```
+
 ## Reference
 
 [1] [[Leetcode] 【BFS｜宽度优先搜索】题型技巧分类总结](https://www.1point3acres.com/bbs/thread-909366-1-1.html)

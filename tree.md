@@ -1,10 +1,16 @@
 # Tree
 
-CREATED 2022-07-26
+CREATED 2022/07/26
 
 ## Traverse Order
 
 ### Pre-Order
+
+```
+1. Visit the root node.
+2. Traverse the left subtree, i.e., call Preorder(left-subtree)
+3. Traverse the right subtree, i.e., call Preorder(right-subtree) 
+```
 
 ```
 /**
@@ -37,6 +43,14 @@ public:
 ```
 
 ### In-Order
+
+```
+1. Traverse the left subtree, i.e., call Inorder(left-subtree)
+2. Visit the root node.
+3. Traverse the right subtree, i.e., call Inorder(right-subtree)
+
+Especially, in the case of binary search trees (BST), Inorder traversal gives nodes in non-decreasing order.
+```
 
 ```
 class Solution {

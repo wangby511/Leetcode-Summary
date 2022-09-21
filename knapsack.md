@@ -31,11 +31,11 @@ def backpack(w: int, weight: List[int], values: List[int]):
 
 ## Unbounded 0/1 Knapsack problems
 
-Especially coin change problems
+Especially coin change problems. Below is the most common question.
 
 **[322. Coin Change](https://leetcode.com/problems/coin-change/)**
 
-We can use infinite number of each kind of coin, so we use increasing order loop of *for(int j = coin;j <= amount;j++)*.
+We can use infinite number of each kind of coin, so we use increasing order for the loop of *for(int j = coin;j <= amount;j++)*.
 
 Return **the fewest number of coins** that you need to make up that amount.
 

@@ -1,4 +1,4 @@
-# DAG
+# DAG - Directed Acyclic Graph
 
 CREATED 2022-07-20
 

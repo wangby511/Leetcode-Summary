@@ -75,8 +75,6 @@ public:
             }
         }
     }
-    //2019.08.31 AFTERNOON 基本上是bug free
-    //2020.04.25
 };
 
 /**
@@ -87,7 +85,7 @@ public:
  */
 ```
 
-**[LFU]()**
+**[LFU](https://leetcode.com/problems/lfu-cache/)**
 
 ```
 struct node{
@@ -207,5 +205,4 @@ public:
  * int param_1 = obj->get(key);
  * obj->put(key,value);
  */
- ```
- 
+```
