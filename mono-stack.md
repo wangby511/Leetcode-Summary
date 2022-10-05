@@ -1,59 +1,182 @@
-# Mono Stack 总结
+# Mono Stack
 
 Created in 2021-12-12. https://leetcode.com/tag/monotonic-stack/
 
-Updated 2022-08-21
+Updated 2022-10-02
 
 ## Max Rectangle Area Problem
 
+### Solution I - Straight forward stack
+
 **[84. Largest Rectangle in Histogram](https://leetcode.com/problems/largest-rectangle-in-histogram/)**
 
-Search for the maximum rectangle area in a histogram. Using **a monolithic increasing stack** to record numbers. DO NOT forget to add a ZERO at the end of the array to deal with exit criteria.
+Search for the maximum rectangle area in a histogram. Using **a monolithic increasing stack** to record numbers. 
+**DO NOT forget to add a ZERO at the end of the array to deal with exit criteria.**
 
 ```
 class Solution {
 public:
-    int largestRectangleArea(vector<int>& height) {
+    int largestRectangleArea(vector<int>& heights) {
+        heights.push_back(0); // Mark the end by pushing back an additional zero number
+        int length = heights.size();
+        stack<int> st;
         int result = 0;
-        height.push_back(0);
-        vector<int> index;
-            
-        for(int i = 0; i < height.size(); i++){
-            while(index.size() > 0 && height[index.back()] >= height[i]){
-                int h = height[index.back()];
-                index.pop_back();
-                    
-                int sidx = index.size() > 0 ? index.back() : -1;
-                result = max(result, h * (i-sidx-1));
-                cout<<h<<" * "<<"("<<i<<"-"<<sidx<<"-1) = "<<h * (i-sidx-1)<<endl;
+        for (int i = 0; i < length; i++) {
+            while (!st.empty() && heights[st.top()] >= heights[i]) {
+                int height = heights[st.top()];
+                st.pop();
+                result = max(result, height * (i - (st.empty() ? -1: st.top()) - 1));
             }
-            index.push_back(i);
+            st.push(i);
         }
         return result;
     }
 };
 ```
 
-Follow up question - **[85. Maximal Rectangle](https://leetcode.com/problems/maximal-rectangle/)** with time complexity O(#row^2 * #column).
+Follow up question on the same solution - **[85. Maximal Rectangle](https://leetcode.com/problems/maximal-rectangle/)** with time complexity O(#row^2 * #column).
 
-**[739. Daily Temperatures](https://leetcode.com/problems/daily-temperatures/)**
+### Solution II - Use left and right arrary as the broders
+
+Similar solution: use left & right two arrays to limit the broder of each item number.
+
+left[i] - the index of heights which heights[left[i]] <= heights[i], left[i] < i and is the closest to i.
+
+right[i] - the index of heights which heights[right[i]] < heights[i], right[i] > i and is the closest to i.
 
 ```
 class Solution {
 public:
-    vector<int> dailyTemperatures(vector<int>& t) {
-        int len = t.size();
-        vector<int> res(len, 0);
+    int largestRectangleArea(vector<int>& heights) {
+        int length = heights.size();
         stack<int> st;
-        for(int i = len - 1;i >= 0;i--) {
-            while(st.size() > 0 && t[i] >= t[st.top()]){
+        vector<int> left(length, -1);
+        vector<int> right(length, length);
+        for (int i = 0; i < length; i++) {
+            int height = heights[i];
+            while (!st.empty() && !(heights[st.top()] <= height)) {
                 st.pop();
             }
-            if(st.empty()) res[i] = 0;
-            else res[i] = st.top() - i;
+            left[i] = st.empty() ? -1: st.top();
             st.push(i);
         }
-        return res;
+
+        while(st.size() > 0)st.pop();
+        for (int i = length - 1; i >= 0; i--) {
+            int height = heights[i];
+            while (!st.empty() && !(heights[st.top()] < height)) {
+                st.pop();
+            }
+            right[i] = st.empty() ? length: st.top();
+            st.push(i);
+        }
+
+        int area = 0;
+        for (int i = 0; i < length; i++) {
+            area = max(area, (right[i] - left[i] - 1) * heights[i]);
+        }
+        return area;
+    }
+};
+```
+
+Similar question - **[907. Sum of Subarray Minimums](https://leetcode.com/problems/sum-of-subarray-minimums)**
+
+Solution: use left & right two arrays to limit the broder of each item number.
+
+```
+class Solution {
+public:
+    int sumSubarrayMins(vector<int>& arr) {
+        int length = arr.size();
+        stack<int> st;
+        vector<int> left(length, -1);
+        vector<int> right(length, length);
+
+        // mono increasing-or-equal stack
+        for (int i = 0; i < length; i++) {
+            int num = arr[i];
+            while (!st.empty() && !(arr[st.top()] <= num)) {
+                st.pop();
+            }
+            left[i] = st.empty() ? -1: st.top();
+            st.push(i);
+        }
+
+        while(st.size() > 0)st.pop();
+
+        // mono increasing stack by reversely traversing the array
+        for (int i = length - 1; i >= 0; i--) {
+            int num = arr[i];
+            while (!st.empty() && !(arr[st.top()] < num)) {
+                st.pop();
+            }
+            right[i] = st.empty() ? length: st.top();
+            st.push(i);
+        }
+
+        long result = 0;
+        const int mod = 1e9 + 7;
+        for (int i = 0; i < length; i++) {
+            result += (long)(i - left[i]) * (long)(right[i] - i) * (long)arr[i];
+            result %= mod;
+        }
+        return result;
+    }
+};
+```
+
+### Data Stream Problems
+
+**[901. Online Stock Span](https://leetcode.com/problems/online-stock-span/)**
+
+Use a mono decreasing stack
+
+```
+class StockSpanner {
+public:
+    stack<pair<int,int>> prices;
+    int index;
+    StockSpanner() {
+        index = 0;
+    }
+    
+    int next(int price) {
+        while(prices.size() > 0 && !(prices.top().first > price)) {
+            prices.pop();
+        }
+        int day = prices.empty()? 0 : prices.top().second;
+        prices.push({price, ++index});
+        return index - day;
+    }
+};
+
+/**
+ * Your StockSpanner object will be instantiated and called as such:
+ * StockSpanner* obj = new StockSpanner();
+ * int param_1 = obj->next(price);
+ */
+```
+
+**[739. Daily Temperatures](https://leetcode.com/problems/daily-temperatures/)**
+
+Traverse in reverse order and use a mono decreasing stack
+
+```
+class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& temperatures) {
+        stack<int> st;
+        int length = temperatures.size();
+        vector<int> result(length, 0);
+        for(int i = length - 1; i >= 0;i--) {
+            while(!st.empty() && !(temperatures[st.top()] > temperatures[i])) {
+                st.pop();
+            }
+            if(!st.empty())result[i] = st.top() - i;
+            st.push(i);
+        }
+        return result;
     }
 };
 ```

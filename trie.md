@@ -67,6 +67,66 @@ public:
  */
  ```
 
+**[212. Word Search II](https://leetcode.com/problems/word-search-ii)**
+
+Use trie tree + DFS to do word searching in a grid. 2021 11 30 Tiktok second round of phone interview.
+
+```
+struct Node {
+    char value;
+    vector<Node*> children;
+    bool isWord;
+    string word;
+    Node() {
+        children.resize(26);
+        isWord = false;
+        word = "";
+    }
+};
+class Solution {
+public:
+    void insert(Node *root, string word) {
+        Node *p = root;
+        for(char x:word) {
+            if(p->children[x - 'a'] == NULL) {
+                p->children[x - 'a'] = new Node();
+            }
+            p = p->children[x - 'a'];
+        }
+        p -> isWord = true;
+        p -> word = word;
+    }
+    void dfs(Node *root, vector<vector<char>>& board, int i, int j, vector<string>& result) {
+        int n = board.size(), m = board[0].size();
+        if(root == NULL || i < 0 || i >= n || j < 0 || j >= m || board[i][j] == ' ')return;
+        char x = board[i][j];
+        Node *p = root->children[x - 'a'];
+        if(p && p->isWord) {
+            result.push_back(p->word);
+        }
+        board[i][j] = ' ';
+        dfs(p, board,i + 1,j, result);
+        dfs(p, board,i - 1,j, result);
+        dfs(p, board,i,j + 1, result);
+        dfs(p, board,i,j - 1, result);
+        board[i][j] = x;
+    }
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+        Node *root = new Node();
+        for(string word: words)insert(root, word);
+        vector<string> ans;
+        int n = board.size(), m = board[0].size();
+        for(int i = 0;i < n;i++) {
+            for(int j = 0;j < m;j++) {
+                dfs(root, board, i, j, ans);
+            }
+        }
+        unordered_set<string> st(ans.begin(), ans.end());
+        return vector<string> (st.begin(), st.end());
+    }
+};
+```
+
 ## Similar Follow Up - File System
 
 **[1166. Design File System](https://leetcode.com/problems/design-file-system/)**

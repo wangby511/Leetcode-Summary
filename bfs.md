@@ -255,7 +255,7 @@ public:
 
 求从一个点到另一个点能到达的最短路径
 
-### 点与点之间连接代价相同的情况
+### 点与点，状态相互之间连接代价相同的情况
 
 当每个点的代价相同时，使用普通queue做BFS即可，也可以level order。
 
@@ -418,6 +418,8 @@ And also remember to check whether this cell can be reached from all buildings.
 
 ### BFS依次顺序和要求的顺序不一致，类似DIJKSTRA'S算法，此时使用优先级队列
 
+当点到点的代价不同时，此时必须使用优先级队列，保证每次遍历到的状态都是能以最小代价到达的。
+
 **[505. The Maze II](https://leetcode.com/problems/the-maze-ii/)**
 
 Follow Up of "The Maze I" - find the shortest distance: 迷宫题，小球直到撞墙才停下来。
@@ -517,7 +519,64 @@ public:
 
 See solution in shortest-path.md file. Similar solution with priority queue to pop up the cheapest price every time.
 
-### BFS同时并记录当前顺序
+**[752. Open the Lock](https://leetcode.com/problems/open-the-lock/)**
+
+Find the smallest step to open the lock. Also we use a priority queue (min heap). Each time we pop a state from this priority queue, it must be the smallest step to reach this number.
+
+Also we need to avoid dead states and use a visited hashmap to record whether each number we have visited it before or not.
+
+```
+class Solution {
+public:
+    int openLock(vector<string>& deadends, string target) {
+        unordered_map<string, int> deadendMaps;
+        for(string d: deadends)deadendMaps[d]++;
+        
+        unordered_map<string, int> visited;
+        struct comp {
+            bool operator()(const pair<int, string> &a, const pair<int, string> &b) {
+                return a > b;
+            }
+        };
+        priority_queue<pair<int, string>, vector<pair<int, string>>, comp> pq;
+        if(deadendMaps.count("0000") == 0) {
+            pq.push({0, "0000"});
+        }
+        while (pq.size() > 0) {
+            string current = pq.top().second;
+            int step = pq.top().first;
+            pq.pop();
+            if(current == target)return step;
+            for(int k = 0;k < 4;k++) {
+                char currentChar = current[k];
+                
+                // plus one
+                string nextState = current;
+                char copyChar = currentChar;
+                if(copyChar == '9')copyChar = '0';
+                else copyChar++;
+                nextState[k] = copyChar;
+                if(deadendMaps.count(nextState) == 0 && visited[nextState]++ == 0) {
+                    pq.push({1 + step, nextState});
+                }
+                
+                // minus one
+                nextState = current;
+                copyChar = currentChar;
+                if(copyChar == '0')copyChar = '9';
+                else copyChar--;
+                nextState[k] = copyChar;
+                if(deadendMaps.count(nextState) == 0 && visited[nextState]++ == 0) {
+                    pq.push({1 + step, nextState});
+                }
+            }
+        }
+        return -1;
+    }
+};
+```
+
+### Follow up - BFS求出最短路径同时并记录当前顺序
 
 Record the path while doing bfs search
 

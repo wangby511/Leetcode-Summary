@@ -202,7 +202,7 @@ public:
 
 Find the kth smallest number in a matrix where each of the rows and columns is sorted in ascending order.
 
-Use binary search method: given a number, find the index position of its order in the matrix.
+Given a number, find the index position of its order in the whole matrix. Use binary search method to find which number fits that given index.
 
 ```
 class Solution {

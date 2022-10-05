@@ -2,7 +2,7 @@
 
 CREATED 2022-08-25
 
-## Word Distance
+## Word Distance Related
 
 **[72. Edit Distance](https://leetcode.com/problems/edit-distance/)**
 
@@ -37,6 +37,8 @@ public:
     }
 };
 ```
+
+## SubArray Related
 
 **[718. Maximum Length of Repeated Subarray](https://leetcode.com/problems/maximum-length-of-repeated-subarray/)**
 
