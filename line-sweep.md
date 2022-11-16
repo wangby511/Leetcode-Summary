@@ -4,8 +4,7 @@ CREATED 2022-09-20
 
 **[253. Meeting Rooms II](https://leetcode.com/problems/meeting-rooms-ii/)**
 
-Solution I - Use a treemap to do travserse in time ascending order. When it is the starting, plus one. Otherwise minus one.
-Then use a room number to travserse it and get the maximum number.
+Solution I - Use a TreeMap to do traverse in time ascending order. When it is the starting, plus one to the meeting room number. Otherwise minus one. The result is the maximum number during the traversing.
 
 ```
 class Solution {
@@ -45,7 +44,7 @@ public:
         sort(endTime.begin(), endTime.end());
         int i = 0, j = 0, room = 0;
         while(i < length && j < length) {
-        // while(i < length) { // We can gurantee that i < length condition is reached first.
+        // while(i < length) { // We can guarantee that i < length condition is reached first.
             if (beginTime[i] >= endTime[j]) {
                 room--;
                 j++;

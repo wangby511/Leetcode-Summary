@@ -1,6 +1,6 @@
 # BFS - Breadth First Search
 
-## 扩散类，从每一个关键点扩散到周围
+## 扩散类，从每一个关键点扩散到周围，或检测能否到达
 
 Queue：首先有很多起始点，比如岸边的点，或者指定的点，烂掉的橘子的点，这些要首先加入queue
 
@@ -9,6 +9,128 @@ Visited：其次，对于visited，有两种情况:
 1）一种是每visit一个点，**inplace update matrix**。
 
 2）另一种是用visited matrix/array来记录当前节点是否访问过，因为扩散类问题不能re-visit去过的点。
+
+### 单点扩散类
+
+**[733. Flood Fill](https://leetcode.com/problems/flood-fill/)**
+
+bfs，就地update matrix里的元素表示已经访问过。
+
+```
+class Solution {
+public:
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor) {
+        int n = image.size(), m = image[0].size();
+        int o = image[sr][sc];
+        image[sr][sc] = newColor;
+        if(o == newColor)return image;
+        queue<pair<int, int>> qu;
+        qu.push({sr, sc});
+        vector<vector<int>> directions = {{1,0},{-1,0},{0,-1},{0,1}};
+        
+        while(!qu.empty()){
+            pair<int,int> c = qu.front();
+            qu.pop();
+            for(vector<int>& direction: directions){
+                int xx = direction[0] + c.first;
+                int yy = direction[1] + c.second;
+                if(xx < 0 || xx >= n || yy < 0 || yy >= m || image[xx][yy] != o)continue;
+                image[xx][yy] = newColor;
+                qu.push({xx, yy});
+            }
+        }
+        return image;
+    }
+};
+```
+
+**[490. The Maze](https://leetcode.com/problems/the-maze/)**
+
+迷宫题，小球直到撞墙才停下来。用visited记录中途停留到的点的坐标。
+
+```
+class Solution {
+public:
+    bool hasPath(vector<vector<int>>& maze, vector<int>& start, vector<int>& end) {
+        vector<vector<int>> directions = {{-1,0},{1,0},{0,1},{0,-1}};
+        int n = maze.size(), m = maze[0].size();
+        queue<vector<int>> qu;
+        qu.push({start[0], start[1]});
+        vector<vector<int>> visited(n, vector<int> (m, 0));
+        while (!qu.empty()) {
+            vector<int> current = qu.front();
+            qu.pop();
+            int x = current[0], y = current[1];
+            if(x == end[0] && y == end[1])return true;
+            for (vector<int>& direction: directions) {
+                int nextX = x;
+                int nextY = y;
+                while (nextX >= 0 && nextX < n && nextY >= 0 && nextY < m && maze[nextX][nextY] == 0) {
+                    nextX += direction[0];
+                    nextY += direction[1];
+                }
+                nextX -= direction[0];
+                nextY -= direction[1];
+                if (visited[nextX][nextY]++ == 0) {
+                    qu.push({nextX, nextY});
+                }
+            }
+        }
+        return false;
+    }
+};
+```
+
+### 多点扩散类
+
+起始状态有多个点
+
+**[994. Rotting Oranges](https://leetcode.com/problems/rotting-oranges/)**
+
+层次(level)遍历, time或distance作为level，同样就地update matrix里的元素表示已经访问过。
+
+```
+class Solution {
+public:
+    vector<vector<int>> dirs = {{-1,0},{1,0},{0,1},{0,-1}};
+    int orangesRotting(vector<vector<int>>& grid) {
+        int n = grid.size(), m = grid[0].size();
+        int left = 0;
+        queue<vector<int>> qu;
+        for(int i = 0;i < n;i++) {
+            for(int j = 0;j < m;j++) {
+                if(grid[i][j] == 1)left++;
+                else if(grid[i][j] == 2) {
+                    qu.push({i, j});
+                }
+            }
+        }
+        int time = 0;
+        if(left == 0)return 0;
+        while(!qu.empty()) {
+            int length = qu.size();
+            for(int i = 0; i < length;i++) {
+                vector<int> c = qu.front();
+                qu.pop();
+                int x = c[0], y = c[1];
+                for(vector<int>& dir: dirs) {
+                    int xx = x + dir[0];
+                    int yy = y + dir[1];
+                    if(xx < 0 || xx >= n || yy < 0 || yy >= m)continue;
+                    if(grid[xx][yy] == 1) {
+                        qu.push({xx,yy});
+                        grid[xx][yy] = 2;
+                        left--;
+                    }
+                }
+            }
+            if(qu.size() > 0)time++;
+        }
+        if(left > 0)return -1;
+        return time;
+    }
+};
+```
 
 **[417. Pacific Atlantic Water Flow](https://leetcode.com/problems/pacific-atlantic-water-flow/)**
 
@@ -73,107 +195,16 @@ public:
 };
 ```
 
-**[733. Flood Fill](https://leetcode.com/problems/flood-fill/)**
+### 自己根据边或关系构造图
 
-bfs，就地update matrix里的元素表示已经访问过。
-
-```
-class Solution {
-public:
-    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor) {
-        int n = image.size(), m = image[0].size();
-        int o = image[sr][sc];
-        image[sr][sc] = newColor;
-        if(o == newColor)return image;
-        queue<pair<int, int>> qu;
-        qu.push({sr, sc});
-        vector<vector<int>> directions = {{1,0},{-1,0},{0,-1},{0,1}};
-        
-        while(!qu.empty()){
-            pair<int,int> c = qu.front();
-            qu.pop();
-            for(vector<int>& direction: directions){
-                int xx = direction[0] + c.first;
-                int yy = direction[1] + c.second;
-                if(xx < 0 || xx >= n || yy < 0 || yy >= m || image[xx][yy] != o)continue;
-                image[xx][yy] = newColor;
-                qu.push({xx, yy});
-            }
-        }
-        return image;
-    }
-};
-```
-
-**[994. Rotting Oranges](https://leetcode.com/problems/rotting-oranges/)**
-
-层次(level)遍历, time或distance作为level，同样就地update matrix里的元素表示已经访问过。
+一般做法，根据edge边的关系构造directed有向图或undirected无向图。
 
 ```
-class Solution {
-public:
-    vector<vector<int>> dirs = {{-1,0},{1,0},{0,1},{0,-1}};
-    int orangesRotting(vector<vector<int>>& grid) {
-        int n = grid.size(), m = grid[0].size();
-        int left = 0;
-        queue<vector<int>> qu;
-        for(int i = 0;i < n;i++) {
-            for(int j = 0;j < m;j++) {
-                if(grid[i][j] == 1)left++;
-                else if(grid[i][j] == 2) {
-                    qu.push({i, j});
-                }
-            }
-        }
-        int time = 0;
-        if(left == 0)return 0;
-        while(!qu.empty()) {
-            int length = qu.size();
-            for(int i = 0; i < length;i++) {
-                vector<int> c = qu.front();
-                qu.pop();
-                int x = c[0], y = c[1];
-                for(vector<int>& dir: dirs) {
-                    int xx = x + dir[0];
-                    int yy = y + dir[1];
-                    if(xx < 0 || xx >= n || yy < 0 || yy >= m)continue;
-                    if(grid[xx][yy] == 1) {
-                        qu.push({xx,yy});
-                        grid[xx][yy] = 2;
-                        left--;
-                    }
-                }
-            }
-            if(qu.size() > 0)time++;
-        }
-        if(left > 0)return -1;
-        return time;
-    }
-};
-```
-
-**[841. Keys and Rooms](https://leetcode.com/problems/keys-and-rooms/)**
-
-```
-class Solution {
-public:
-    bool canVisitAllRooms(vector<vector<int>>& rooms) {
-        queue<int> unlocks;
-        unlocks.push(0);
-        int length = rooms.size();
-        vector<int> visited(length, 0);
-        while(unlocks.size() > 0) {
-            int current = unlocks.front();
-            unlocks.pop();
-            if(visited[current]++ > 0)continue; // visited[current]++; in case it causes forever loop!
-            for(int newKey: rooms[current]) {
-                unlocks.push(newKey);
-            }
-        }
-        for(int i = 0;i < length;i++)if(visited[i] == 0)return false;
-        return true;
-    }
-};
+unordered_map<int, vector<int>> tree; // initialize a hashmap, key is node, value is set of its neighbors
+for(vector<int>& edge: edges){
+    tree[edge[0]].push_back(edge[1]);
+    tree[edge[1]].push_back(edge[0]); // construct undirected graph
+}
 ```
 
 **[261. Graph Valid Tree](https://leetcode.com/problems/graph-valid-tree/)**
@@ -208,56 +239,68 @@ public:
 };
 ```
 
-## 检测能否到达，一般是给matrix或者graph，从起始点到指定的终点
+**[399. Evaluate Division](https://leetcode.com/problems/evaluate-division)**
 
-Queue：加入起始点， 普通BFS，poll出来的每一个值检查是否是终点
-
-Visited：一定要visited， 用来保证不在circle里循环，有的时候会变成是否全联通， 或者是是否能达到所有的点，这个时候就是检查visited set的大小了
-
-**[490. The Maze](https://leetcode.com/problems/the-maze/)**
-
-迷宫题，小球直到撞墙才停下来。用visited记录中途停留到的点的坐标。
+类似货币汇率转化问题
 
 ```
 class Solution {
 public:
-    bool hasPath(vector<vector<int>>& maze, vector<int>& start, vector<int>& end) {
-        vector<vector<int>> directions = {{-1,0},{1,0},{0,1},{0,-1}};
-        int n = maze.size(), m = maze[0].size();
-        queue<vector<int>> qu;
-        qu.push({start[0], start[1]});
-        vector<vector<int>> visited(n, vector<int> (m, 0));
-        while (!qu.empty()) {
-            vector<int> current = qu.front();
+    // unordered_map<string, unordered_map<string, double>> memo; // Set up cache for speeding up if necessary
+    unordered_map<string, vector<pair<string, double>>> graph;
+    double bfs(string s1, string s2, double current) {
+        // if (memo[s1].count(s2) != 0) return memo[s1][s2];
+        queue<pair<string, double>> qu;
+        qu.push({s1, 1.0});
+        unordered_map<string, bool> visited;
+        visited[s1] = true;
+        while (qu.size() > 0) {
+            pair<string, double> current = qu.front();
             qu.pop();
-            int x = current[0], y = current[1];
-            if(x == end[0] && y == end[1])return true;
-            for (vector<int>& direction: directions) {
-                int nextX = x;
-                int nextY = y;
-                while (nextX >= 0 && nextX < n && nextY >= 0 && nextY < m && maze[nextX][nextY] == 0) {
-                    nextX += direction[0];
-                    nextY += direction[1];
-                }
-                nextX -= direction[0];
-                nextY -= direction[1];
-                if (visited[nextX][nextY]++ == 0) {
-                    qu.push({nextX, nextY});
-                }
+            string currentName = current.first;
+            double rate = current.second;
+            // memo[s1][currentName] = rate;
+            if (current.first == s2)return rate;
+            for (auto next: graph[current.first]) {
+                if(visited[next.first])continue;
+                visited[next.first] = true;
+                qu.push({next.first, next.second * rate});
             }
         }
-        return false;
+        return -1.0;
+        
+    }
+    vector<double> calcEquation(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries) {
+        vector<double> result;
+        for (int i = 0;i < equations.size();i++){
+            string s1 = equations[i][0];
+            string s2 = equations[i][1];
+            double times = values[i];
+            graph[s2].push_back(make_pair(s1, 1.0/times));
+            graph[s1].push_back(make_pair(s2, times));
+        }
+        for (int i = 0;i < queries.size();i++) {
+            string s1 = queries[i][0];
+            string s2 = queries[i][1];
+            if (graph[s1].size() == 0 || graph[s2].size() == 0){
+                result.push_back(-1.0);
+                continue;
+            }
+            double currency = bfs(s1, s2, 1.0);
+            result.push_back(currency);
+        }
+        return result; 
     }
 };
 ```
 
 ## 求最短路径问题
 
-求从一个点到另一个点能到达的最短路径
+求从一个点到另一个点能到达的最短路径，这里分为两种情况：一种为每次搜索到下一届点或状态的代价都相同，第二种为每次搜索付出的代价不同。
 
 ### 点与点，状态相互之间连接代价相同的情况
 
-当每个点的代价相同时，使用普通queue做BFS即可，也可以level order。
+当每个点的代价相同时，使用普通queue做BFS即可，也可以level order层级遍历。
 
 **[1091. Shortest Path in Binary Matrix](https://leetcode.com/problems/shortest-path-in-binary-matrix/)**
 
@@ -467,11 +510,11 @@ public:
 
 **[1293. Shortest Path in a Grid with Obstacles Elimination](https://leetcode.com/problems/shortest-path-in-a-grid-with-obstacles-elimination/)**
 
-This time we are using a 3-dimensional distance array to record each shortest distance.
+This time we are using a 3-dimensional distance array to record each state's shortest distance.
 
 distance[i][j][k] - the shortest distance from (0,0) to (i,j) which has k times of breaking walls chances left.
 
-dijkstra's - use a priority_queue
+Also this is belonging to dijkstra's algorithm, using a priority queue.
 
 ```
 class Solution {
@@ -667,7 +710,7 @@ public:
 };
 ```
 
-## 二分图 - Bipartition
+## 二分图问题 - Bipartition
 
 每个节点分配两种颜色之一，看是否满足二分图条件。bfs搜索没有染色的节点，看是否和邻居节点形成不同颜色。
 

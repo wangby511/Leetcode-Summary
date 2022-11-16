@@ -69,6 +69,46 @@ public:
 };
 ```
 
+## Max-Profit Related
+
+**[1235. Maximum Profit in Job Scheduling](https://leetcode.com/problems/maximum-profit-in-job-scheduling/)**
+
+Sort by the endTime ascending order, and use dp[i] to represent the maximum profit we can get from job 1 to i.
+
+dp[i] = max(dp[j] + currentProfit[i], dp[i - 1]);
+
+For each job, if we do it then we need to find the previous non-overlapping jobs. If we don't do it, then use the previous total profit (until last job).
+
+Space - O(N), Time - O(NlogN), N is the size/length of jobs.
+
+```
+class Solution {
+public:
+    int jobScheduling(vector<int>& startTime, vector<int>& endTime, vector<int>& profit) {
+        vector<vector<int>> p;
+        int len = startTime.size();
+        for(int i = 0;i < len;i++) {
+            p.push_back({startTime[i], endTime[i], profit[i]});
+        }
+        sort(p.begin(), p.end(), [](const vector<int>& a, const vector<int>& b){
+            return a[1] < b[1];
+        });
+        vector<int> dp(len, p[0][2]);
+        for(int i = 0;i < len;i++) {
+            int l = 0, r = i;
+            while(l < r) {
+                int mid = l + (r - l)/2;
+                if(p[mid][1] <= p[i][0])l = mid + 1;
+                else r = mid;
+            }
+            int prev = (i - 1 >= 0)?dp[i - 1] : 0;
+            dp[i] = max(prev, ((l - 1 >= 0)?dp[l - 1]:0) + p[i][2]);
+        }
+        return dp[len - 1];
+    }
+};
+```
+
 ## 3 Dimension
 
 **[1473. Paint House III](https://leetcode.com/problems/paint-house-iii/)**
