@@ -26,7 +26,40 @@ Ways of representing graph:
 
 3 找出入度为0的入口，加入队列queue中。
 
-4 bfs拓扑排序，依次把入度减为0的节点加入队列，最后查看是否全部遍历到，否则有环或者非连通图。
+4 BFS拓扑排序，依次把入度减为0的节点加入队列，最后查看是否全部遍历到，否则有环或者非连通图。
+
+```
+// Construct the graph with adjacency list format
+unordered_map<T, vector<T>> neighbors;
+
+// Find all the nodes' in-degree
+unordered_map<T, int> inDegree;
+for (E directedEdge: edges) {
+    inDegree[directedEdge[0]]+=0;
+    inDegree[directedEdge[1]]++;
+}
+
+// Find all the nodes with zero in-degree and put them into the queue initially
+queue<T> qu;
+for (auto it: inDegree) {
+    if(it.second == 0) {
+        qu.push(it.first);
+    }
+}
+
+// Traverse with BFS order
+while (!qu.empty()) {
+    T current = qu.front();
+    qu.pop();
+    for (T neighbor : current's neighbors nodes) {
+        if(--inDegree[neighbor] == 0) {
+            qu.push(neighbor);
+        }
+    }
+}
+
+// Determine if all nodes have been traversed or not
+```
 
 **[https://www.lintcode.com/problem/127/](https://www.lintcode.com/problem/127/)**
 
@@ -131,12 +164,12 @@ class Solution {
 public:
     vector<int> findMinHeightTrees(int n, vector<vector<int>>& edges) {
         vector<int> degree(n, 0);
-        unordered_map<int,vector<int>> neighbour;
+        unordered_map<int,vector<int>> neighbor;
         if(n == 1)return {0};
         vector<int> result;
         for(vector<int>& edge:edges){
-            neighbour[edge[0]].push_back(edge[1]);
-            neighbour[edge[1]].push_back(edge[0]);
+            neighbor[edge[0]].push_back(edge[1]);
+            neighbor[edge[1]].push_back(edge[0]);
             degree[edge[0]]++;
             degree[edge[1]]++;
         }
@@ -154,7 +187,7 @@ public:
                 int current = qu.front();
                 qu.pop();
                 levels[current] = level;
-                for(int x: neighbour[current]) {
+                for(int x: neighbor[current]) {
                     if(--degree[x] == 0){
                         qu.push(x);
                     }
@@ -162,9 +195,9 @@ public:
             }
             level++;
         }
-        int maxlevel = *max_element(levels.begin(), levels.end());
+        int maxLevel = *max_element(levels.begin(), levels.end());
         for(int i = 0;i < n;i++) {
-            if(levels[i] == maxlevel){
+            if(levels[i] == maxLevel){
                 result.push_back(i);
             }
         } 
@@ -310,3 +343,5 @@ public:
 ```
 
 **444. Sequence Reconstruction**
+
+TODO

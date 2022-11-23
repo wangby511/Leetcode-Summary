@@ -4,16 +4,26 @@ CREATED 2022-07-15
 
 背包问题
 
-## General Solution
+## General Solution Template
 
 Capacity of Knapsack: W (given)
 Objective: Maximize profit.
 
+If the same item can be used only once.
 ```
 int dp[W + 1] = {0};
 for (int i=0; i<n; ++i)
     for (int j=W; j>=weight[i]; --j)
-        dp[j] = max(dp[j], value[i]+ dp[j - weight[i]]);
+        dp[j] = max(dp[j], value[i] + dp[j - weight[i]]);
+return dp[W];
+```
+
+// if the same item can be used multiple times, change the inner for-loop traverse direction to increasing order
+```
+int dp[W + 1] = {0};
+for (int i=0; i<n; ++i)
+    for (int j=weight[i]; j <= W; ++j)
+        dp[j] = max(dp[j], value[i] + dp[j - weight[i]]);
 return dp[W];
 ```
 
@@ -66,7 +76,8 @@ public:
     int change(int amount, vector<int>& coins) {
         vector<int> dp(amount + 1, 0);
         dp[0] = 1;
-        for(int coin : coins) {
+        for(int coin : coins) { 
+            // Don't swap the order of these 2 for-loops, otherwise we will count duplicate combinations.
             for(int j = coin; j <= amount; j++) {
                 dp[j] += dp[j - coin];
             }
@@ -119,28 +130,61 @@ public:
 
 ## Bounded 0/1 Knapsack problems
 
-**[2291. Maximum Profit From Trading Stocks](https://leetcode.com/problems/maximum-profit-from-trading-stocks/)**
+背包limit中选取value最大值问题
+
+<https://www.testgears.com/#/searchQuestions/public/description/54542787930418317136783455968708289780>
 
 ```
-class Solution {
-public:
-    int maximumProfit(vector<int>& present, vector<int>& future, int budget) {
-        int dp[budget + 1];
-        memset(dp, 0, sizeof(dp));
-        
-        int n = present.size();
-        for(int i = 0;i < n;i++) {
-            int profit = future[i] - present[i];
-            for(int j = budget;j >= present[i];j--) {
-                dp[j] = max(dp[j], dp[j - present[i]] + profit);
-            }
-        }
-        return dp[budget];     
+Given a budget as double and item values as double array and calories in array as integers. Find the max number of calories for the given budget.
+
+Example Input:
+
+price = {1.25,1.0,0.75}
+
+calories = {100,70,80}
+
+budget = 3.70
+
+Max calories = 340
+
+Off all the combinations. $.75 times 3 is $2.25 and calories are 240
+
+Now left with $1.45, so to maximize, take $1.25, the calories is 100
+
+and add 240 + 100 = 340
+```
+
+Use general template and translate the unit from cent to integer before doing dynamic programming.
+
+```
+using namespace std;
+int calculateMaxCalories(vector<double>& prices, vector<int>& calories, double budget) {
+    vector<int> pricesInteger;
+    for (double p: prices) {
+        pricesInteger.push_back(int(p * 100));
     }
-};
+    int budgetInteger = int(budget * 100);
+    vector<int> dp(budgetInteger + 1, 0);
+    for (int i = 0;i < pricesInteger.size();i++) {
+        int price = pricesInteger[i];
+        int cal = calories[i];
+        for (int j = price;j <= budgetInteger;j++) {
+            dp[j] = max(dp[j], cal + dp[j - price]);
+        }
+    }
+    return *max_element(dp.begin(), dp.end());
+}
+
+int main() {
+    vector<double> prices = {1.25, 1.0, 0.75};
+    vector<int> calories = {100, 70, 80};
+    double budget = 3.70;
+    cout<<calculateMaxCalories(prices, calories, budget)<<endl; // 340
+    return 0;
+}
 ```
 
-## Partition the array into *Equal sum partition*
+## Partition the array into *Equal Sum Partition*
 
 **[416. Partition Equal Subset Sum](https://leetcode.com/problems/partition-equal-subset-sum/)**
 

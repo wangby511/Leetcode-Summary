@@ -1,10 +1,38 @@
-# DFS
+# DFS - Depth First Search
 
 CREATED 2022-07-15
 
-UPDATED 2022-08-21
+UPDATED 2022-11-21
 
-## 判断是否可以从一点到达另外一点
+## Permutation排列问题
+
+**[46. Permutations](https://leetcode.com/problems/permutations/)**
+
+排列问题。当前数字交换每一个和后面的数字，之后进行递归操作。本题中没有重复数字。
+
+```
+class Solution {
+public:
+    vector<vector<int>> result;
+    void permutation_helper(vector<int>& nums,int begin){
+        if (begin == nums.size()){
+            result.push_back(nums);
+            return;
+        }
+        for (int i = begin; i < nums.size(); i++){
+            swap(nums[i], nums[begin]);
+            permutation_helper(nums, 1 + begin);
+            swap(nums[i], nums[begin]);  
+        }
+    }
+    vector<vector<int>> permute(vector<int>& nums) {
+        permutation_helper(nums, 0);
+        return result;
+    }
+};
+```
+
+## 搜索问题 - 判断是否可以从一点到达另外一点
 
 **[787. Cheapest Flights Within K Stops](https://leetcode.com/problems/cheapest-flights-within-k-stops)**
 
@@ -41,9 +69,56 @@ public:
 };
 ```
 
-## DFS + MEMO 记忆化dfs搜索
+## DFS + MEMO - 记忆化dfs搜索
 
-搜索过程中把状态结果保存起来，以便作缓存用。
+搜索过程中把中间状态结果保存起来，以便作缓存用，降低时间复杂度以及重复搜索。
+
+**[329. Longest Increasing Path in a Matrix](https://leetcode.com/problems/longest-increasing-path-in-a-matrix/)**
+
+找出矩阵中最长的单调自增路径长度。
+
+对每一个点做DFS，遍历四周的点，如果已有保存结果，则直接取结果值，如果没有则继续在递增的邻居上进行递归搜索。
+
+```
+class Solution {
+public:
+    vector<vector<int>> directions = {{-1, 0}, {1,0}, {0,1}, {0,-1}};
+    int dfs(vector<vector<int>>& matrix, int i, int j, vector<vector<int>>& memo) {
+        int n = matrix.size();
+        int m = matrix[0].size();
+        if (memo[i][j] != 0) return memo[i][j];
+        int result = 1;
+        for (vector<int>& direction: directions) {
+            int ii = i + direction[0];
+            int jj = j + direction[1];
+            if (ii < 0 || ii >= n || jj < 0 || jj >= m) continue;
+            if (matrix[ii][jj] >= matrix[i][j]) continue;
+            result = max(result, 1 + dfs(matrix, ii, jj, memo));
+        }
+        return memo[i][j] = result;
+        
+    }
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        if(n == 0)return 0;
+        int m = matrix[0].size();
+        if(m == 0)return 0;
+        vector<vector<int>> memo(n, vector<int> (m,0));
+        int result = 0;
+        for (int i = 0;i < n;i++) {
+            for (int j = 0;j < m;j++) {
+                int path = dfs(matrix, i, j, memo);
+                result = max(result, path);
+            }
+        }
+        return result;
+    }
+};
+```
+
+Time complexity : O(N * M). Each vertex/cell will be calculated once and only once.
+
+Space complexity : O(N * M). The cache dominates the space complexity.
 
 **[576. Out of Boundary Paths](https://leetcode.com/problems/out-of-boundary-paths/)**
 

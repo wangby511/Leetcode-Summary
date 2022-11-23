@@ -195,6 +195,44 @@ public:
 };
 ```
 
+**[1926. Nearest Exit from Entrance in Maze](https://leetcode.com/problems/nearest-exit-from-entrance-in-maze)**
+
+Initial points: all exits. Do BFS operation starting from them until finding the target point.
+
+```
+class Solution {
+public:
+    int nearestExit(vector<vector<char>>& maze, vector<int>& entrance) {
+        queue<vector<int>> qu;
+        int n = maze.size(),m = maze[0].size();
+        for (int i = 0;i < n;i++) {
+            for (int j = 0;j < m;j++) {
+                if (i == 0 || i == n - 1 || j == 0 || j == m - 1) {
+                    if(maze[i][j] == '.' && !(i == entrance[0] && j == entrance[1])) {
+                        qu.push({i, j, 0});
+                    }
+                }
+            }
+        }
+        vector<vector<int>> directions = {{-1,0},{1,0},{0,1},{0,-1}};
+        while (!qu.empty()) {
+            vector<int> current = qu.front();
+            qu.pop();
+            int x = current[0], y = current[1], distance = current[2];
+            if (x == entrance[0] && y == entrance[1])return distance;
+            for (vector<int>& direction: directions) {
+                int newx = x + direction[0];
+                int newy = y + direction[1];
+                if(newx < 0 || newx >= n || newy < 0 || newy >= m || maze[newx][newy] != '.')continue;
+                qu.push({newx, newy, 1 + distance});
+                maze[newx][newy] = 'X';
+            }
+        }
+        return -1;
+    }
+};
+```
+
 ### 自己根据边或关系构造图
 
 一般做法，根据edge边的关系构造directed有向图或undirected无向图。

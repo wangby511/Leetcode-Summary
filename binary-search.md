@@ -22,7 +22,20 @@ lower_bound - https://en.cppreference.com/w/cpp/algorithm/lower_bound
 
 upper_bound - https://en.cppreference.com/w/cpp/algorithm/upper_bound
 
-## Template
+## General Template
+
+```
+int left = 0, right = array.size();
+while (left < right) {
+    int mid = left + (right - left)/2;
+    if (mid不满足条件) left = mid + 1;   // if (array[mid] <= target) for upper_bound and if (array[mid] < target) for lower_bound...
+    else right = mid;
+}
+return left; 
+// left could be equal to array.size(), which means no item is satisfied the condition. At this time, the broder is returned!
+```
+
+## Questions
 
 ### Find a specific item exist or not
 
