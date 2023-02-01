@@ -1,8 +1,8 @@
-## Union Find
+# Union Find
 
 Created in 2021-12-15. https://leetcode.com/tag/union-find/ Update 2022-04-30.
 
-### Main Method
+## Main Method
 
 ```
 unordered_map<int,int> index;
@@ -56,6 +56,8 @@ public:
     }
 };
 ```
+
+## LeetCode Examples
 
 ### [684. Redundant Connection](https://leetcode.com/problems/redundant-connection/)
 
@@ -128,19 +130,19 @@ class Solution {
 public:
     unordered_map<int,int> unions;
     int getParent(int x) {
-        if(unions[x] == x) return x;
+        if (unions[x] == x) return x;
         return unions[x] = getParent(unions[x]);
     }
     int minimumCost(int n, vector<vector<int>>& connections) {
-        for(int i = 1;i <= n;i++)unions[i] = i;
+        for (int i = 1; i <= n; i++) unions[i] = i;
         sort(connections.begin(), connections.end(), [](const vector<int>& c1, const vector<int>& c2) {
             return c1[2] < c2[2];
         });
         int result = 0, component = n;
-        for(vector<int>& connection: connections) {
+        for (vector<int>& connection: connections) {
             int a = connection[0], b = connection[1], cost = connection[2];
             int parentA = getParent(a), parentB = getParent(b);
-            if(parentA != parentB) {
+            if (parentA != parentB) {
                 result += cost;
                 unions[parentA] = parentB;
                 component--;
@@ -156,11 +158,11 @@ public:
 ```
         ......
 int minCostToSupplyWater(int n, vector<int>& wells, vector<vector<int>>& pipes) {
-        for(int i = 1; i <= n; i++)unions[i] = i;
+        for (int i = 1; i <= n; i++) unions[i] = i;
         
         // Add a virtual node "0", 
         // connect it to houses with edges weighted by the costs to build wells in these houses.
-        for(int i = 0; i < wells.size(); i++) {
+        for (int i = 0; i < wells.size(); i++) {
             pipes.push_back({0, i + 1, wells[i]});
         }
         ......
