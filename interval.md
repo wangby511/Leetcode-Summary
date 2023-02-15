@@ -51,3 +51,30 @@ public:
     }
 };
 ```
+
+## Others
+
+**[57. Insert Interval](https://leetcode.com/problems/insert-interval)**
+
+```
+class Solution {
+public:
+    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+        int length = intervals.size();
+        vector<vector<int>> result;
+        int i = 0;
+        for (i = 0;i < length && intervals[i][1] < newInterval[0]; i++) {
+            result.push_back(intervals[i]);
+        }
+        result.push_back(newInterval);
+        for (;i < length && !(newInterval[1] < intervals[i][0]); i++) {
+            result.back()[0] = min(result.back()[0], intervals[i][0]);
+            result.back()[1] = max(result.back()[1], intervals[i][1]);
+        }
+        for (;i < length; i++) result.push_back(intervals[i]);
+        return result;
+    }
+};
+```
+
+Time complexity O(n), Space complexity O(n)

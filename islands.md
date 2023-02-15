@@ -66,7 +66,7 @@ Traverse each water pixel, calculate the number of distinct island identifiers f
 class Solution {
 public:
     vector<vector<int>> directions = {{-1,0}, {1,0}, {0,-1}, {0,1}};
-    int calculateIslandArea(vector<vector<char>>& grid, vector<vector<int>>& ids, int i, int j, int islandId){
+    int calculateIslandArea(vector<vector<char>>& grid, vector<vector<int>>& ids, int i, int j, int islandId) {
         int n = grid.size();
         int m = grid[0].size();
         if(i < 0 || i >= n || j < 0 || j >= m)return 0;
@@ -74,7 +74,7 @@ public:
         ids[i][j] = islandId;
         return 1 + calculateIslandArea(grid, ids, i + 1, j, islandId) + calculateIslandArea(grid, ids, i - 1, j, islandId) + calculateIslandArea(grid, ids, i, j - 1, islandId) + calculateIslandArea(grid, ids, i, j + 1, islandId);
     }
-    
+
     int numIslands(vector<vector<char>>& grid) {
         int n = grid.size();
         if(n == 0)return 0;
@@ -85,9 +85,9 @@ public:
         map<vector<int>, int> belongsToIcelandId;
         int islandId = 1;
         vector<vector<int>> ids(n, vector<int> (m, 0));
-        for(int i = 0;i < n;i++){
-            for(int j = 0;j < m;j++){
-                if(grid[i][j] == '1' && ids[i][j] == 0){
+        for (int i = 0;i < n;i++) {
+            for (int j = 0;j < m;j++) {
+                if(grid[i][j] == '1' && ids[i][j] == 0) {
                     int area = calculateIslandArea(grid, ids, i, j, islandId);
                     islandArea[islandId] = area;
                     ++numberOfIslands;
@@ -96,30 +96,42 @@ public:
             }
         }
         int maxResult = 0;
-        for(int i = 0;i < n;i++){
-            for(int j = 0;j < m;j++){
+        for (int i = 0;i < n;i++) {
+            for (int j = 0;j < m;j++) {
                 if(grid[i][j] == '0') {
                     // See if its neighbors are belonging to different island id.
                     unordered_map<int, int> cntIslands;
-                    for(vector<int>& dir: directions) {
+                    for (vector<int>& dir: directions) {
                         int newi = i + dir[0];
                         int newj = j + dir[1];
-                        if(newi < 0 || newi >= n || newj < 0 || newj >= m || grid[newi][newj] == '0')continue;
-                        if(ids[newi][newj] != 0) {
+                        if (newi < 0 || newi >= n || newj < 0 || newj >= m || grid[newi][newj] == '0') continue;
+                        if (ids[newi][newj] != 0) {
                             cntIslands[ids[newi][newj]]++;
                         }
-                        int connectedIslandArea = 1;
-                        for (auto &[id, numberOfId]: cntIslands) {
-                            connectedIslandArea += islandArea[id];
-                        }
-                        maxResult = max(maxResult, connectedIslandArea);
                     }
+                    int connectedIslandArea = 1;
+                    for (auto &[id, numberOfId]: cntIslands) {
+                        connectedIslandArea += islandArea[id];
+                    }
+                    maxResult = max(maxResult, connectedIslandArea);
                 }
             }
         }
-        cout<<maxResult<<endl;
+        cout<<"The maximum island area we can achieve is "<<maxResult<<endl;
         return numberOfIslands;
     }
+
+    int main() {
+        vector<vector<char>> islands = {
+            {'1','1','0','0','0'},
+            {'1','1','0','0','0'},
+            {'0','0','1','0','0'},
+            {'0','0','0','1','1'}
+        };
+        numIslands(islands);
+        return 0;
+    }
+
 /*
     [
     ["1","1","0","0","0"],
@@ -151,7 +163,7 @@ public:
 
 **[694. Number of Distinct Islands](https://leetcode.com/problems/number-of-distinct-islands/)**
 
-An island is considered to be the same as another if and only if one island can be translated (and not rotated or reflected) to equal the other. Return the number of distinct islands.
+An island is considered to be the same as another if and only if one island can be translated (and not rotated or reflected) to another. We can use a serialize function to do the determination function. Return the number of distinct islands.
 
 ```
 class Solution {
@@ -204,6 +216,55 @@ public:
             }
         }
         return cnt.size();
+    }
+};
+```
+
+**[1905. Count Sub Islands](https://leetcode.com/problems/count-sub-islands)**
+
+Calculate all the islands in grid2. For each island in grid2, determine whether all the points are also island in grid1. Count the number of those islands which satisfy the requirement in grid2.
+
+```
+class Solution {
+public:
+    enum status {
+        WATER = 0, ISLAND, VISITED
+    };
+    unordered_map<int, vector<vector<int>>> gridBelongToIcelandId;
+    vector<vector<int>> directions = {{-1,0}, {1,0}, {0,-1}, {0,1}};
+    int calculateIslandArea(vector<vector<int>>& grid, int i, int j, int islandId) {
+        int n = grid.size();
+        int m = grid[0].size();
+        if (i < 0 || i >= n || j < 0 || j >= m) return 0;
+        if(grid[i][j] != ISLAND)return 0;
+        grid[i][j] = VISITED;
+        gridBelongToIcelandId[islandId].push_back({i, j});
+        return 1 + calculateIslandArea(grid, i + 1, j, islandId) + calculateIslandArea(grid, i - 1, j, islandId) + calculateIslandArea(grid, i, j - 1, islandId) + calculateIslandArea(grid, i, j + 1, islandId);
+    }
+    int countSubIslands(vector<vector<int>>& grid1, vector<vector<int>>& grid2) {
+        int n = grid2.size();
+        if (n == 0) return 0;
+        int m = grid2[0].size();
+        if (m == 0) return 0;
+        int islandId = 1;
+        for (int i = 0;i < n;i++) {
+            for (int j = 0;j < m;j++) {
+                if (grid2[i][j] == 1) {
+                    int area = calculateIslandArea(grid2, i, j, islandId);
+                    ++islandId;
+                }
+            }
+        }
+        int result = 0;
+        for (auto it: gridBelongToIcelandId) {
+            bool allBelongsToIslandInGrid1 = true;
+            for (vector<int> & point: it.second) {
+                int x = point[0], y = point[1];
+                if(grid1[x][y] != ISLAND) allBelongsToIslandInGrid1 = false;
+            }
+            if(allBelongsToIslandInGrid1)result++;
+        }
+        return result;
     }
 };
 ```
